@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
 from app import paths
+from app.skill_storage import write_skill_markdown
 from app.library_manifest import LIBRARY_MANIFEST_FILENAME, manifest_path
 from app.chat_store import CHAT_DIRNAME, chat_index_path
 from app.routes_chat import router as chat_router
@@ -48,6 +49,23 @@ def register_settings_routes(app: FastAPI) -> None:
     async def put_skill_selection(payload: SkillSelectionPayload):
         s = set_skills_selected(payload.selected)
         return {"ok": True, "items": skill_rows(s)}
+
+    @app.post("/api/skills/upload")
+    async def upload_skill_file(file: UploadFile = File(...)):
+        raw_name = file.filename or "skill.md"
+        body = await file.read()
+        if len(body) > 1_048_576:
+            raise HTTPException(status_code=400, detail="文件过大（上限 1 MiB）")
+        try:
+            text = body.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise HTTPException(status_code=400, detail="请使用 UTF-8 编码的 Markdown") from exc
+        try:
+            basename = write_skill_markdown(raw_name, text)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        items = skill_rows(load_settings())
+        return {"ok": True, "filename": basename, "items": items}
 
 
 def register_legacy_skills(app: FastAPI) -> None:

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 export type CategoryRow = {
   id: string
@@ -46,8 +46,10 @@ function formatBytes(bytes: number) {
 
 export function LibraryView(props: {
   notifyError: (message: string | null) => void
+  onOpenSettings?: () => void
 }) {
-  const { notifyError } = props
+  const { notifyError, onOpenSettings } = props
+  const uploadInputRef = useRef<HTMLInputElement>(null)
   const [overview, setOverview] = useState<Overview | null>(null)
   const [loading, setLoading] = useState(false)
   const [filterCat, setFilterCat] = useState<string>('__all__')
@@ -220,16 +222,41 @@ export function LibraryView(props: {
   return (
     <div className="library">
       <section className="card">
+        <input
+          ref={uploadInputRef}
+          type="file"
+          accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.bmp,.tif,.tiff"
+          multiple
+          hidden
+          onChange={(e) => void onUploadPick(e.target.files)}
+        />
         <div className="row-actions spread lib-head">
           <h2 style={{ margin: 0 }}>素材库</h2>
-          <button
-            type="button"
-            className="btn"
-            disabled={loading}
-            onClick={() => void refresh()}
-          >
-            {loading ? '刷新中…' : '刷新列表'}
-          </button>
+          <div className="row-actions" style={{ marginTop: 0 }}>
+            <button
+              type="button"
+              className="btn primary slim"
+              disabled={!overview || loading}
+              onClick={() => uploadInputRef.current?.click()}
+            >
+              上传素材
+            </button>
+            <button
+              type="button"
+              className="btn slim"
+              onClick={() => onOpenSettings?.()}
+            >
+              存储路径
+            </button>
+            <button
+              type="button"
+              className="btn slim"
+              disabled={loading}
+              onClick={() => void refresh()}
+            >
+              {loading ? '刷新中…' : '刷新'}
+            </button>
+          </div>
         </div>
 
         {!overview ? (
@@ -339,16 +366,13 @@ export function LibraryView(props: {
                 ) : null}
 
                 <div className="upload-bar">
-                  <label className="btn primary slim file-btn">
-                    上传图片
-                    <input
-                      type="file"
-                      accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.bmp,.tif,.tiff"
-                      multiple
-                      hidden
-                      onChange={(e) => void onUploadPick(e.target.files)}
-                    />
-                  </label>
+                  <button
+                    type="button"
+                    className="btn primary slim"
+                    onClick={() => uploadInputRef.current?.click()}
+                  >
+                    选择图片上传
+                  </button>
                   <span className="hint-inline">
                     目标分类：
                     <strong>{uploadTargetCategory ? '已选' : '（无）'}</strong>
