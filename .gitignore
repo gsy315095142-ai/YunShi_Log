@@ -1,0 +1,23 @@
+# Python
+backend/.venv/
+backend/**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Local data & user assets (defaults live outside repo too; ignore if symlinked here)
+data/*.json
+data/chats/
+data/chat_index.json
+
+# Env / IDE
+.env
+.env.local
+*.log
+.idea/
+.vscode/
+*.swp
