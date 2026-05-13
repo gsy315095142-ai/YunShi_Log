@@ -1,4 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  CAP_LABEL,
+  DEEPSEEK_MODEL_PRESETS,
+  DEEPSEEK_OPENAI_BASE,
+  GLM_CODING_BASE_CN,
+  GLM_CODING_BASE_INTL,
+  GLM_MODEL_PRESETS,
+  KIMI_OPENAI_BASE_CN,
+  KIMI_VISION_MODEL_PRESETS,
+  QWEN_DASHSCOPE_COMPAT_CN,
+  QWEN_VISION_MODEL_PRESETS,
+  detectPrimaryVendor,
+  detectVisionVendor,
+  inferModelCapability,
+  type PrimaryVendorId,
+  type VisionVendorId,
+} from './aiPresets'
 import { ChatView } from './ChatView'
 import { GenerateView } from './GenerateView'
 import { LibraryView } from './LibraryView'
@@ -35,11 +52,6 @@ type SettingsResp = {
 type SkillItem = { filename: string; selected: boolean }
 type SkillsResp = { items: SkillItem[]; skills: string[] }
 
-const CAP_OPTS: { v: AIMasked['capability']; label: string }[] = [
-  { v: 'text', label: '纯文本' },
-  { v: 'text_vision', label: '文本 + 识图（多模态）' },
-]
-
 async function fetchJsonOk(path: string): Promise<unknown> {
   let r: Response
   try {
@@ -75,13 +87,13 @@ function App() {
   const [settings, setSettings] = useState<SettingsResp | null>(null)
   const [primBase, setPrimBase] = useState('')
   const [primModel, setPrimModel] = useState('')
-  const [primCap, setPrimCap] = useState<AIMasked['capability']>('text')
+  const [primaryVendor, setPrimaryVendor] = useState<PrimaryVendorId>('custom')
   const [primKey, setPrimKey] = useState('')
   const [primTouchedKey, setPrimTouchedKey] = useState(false)
 
   const [visBase, setVisBase] = useState('')
   const [visModel, setVisModel] = useState('')
-  const [visCap, setVisCap] = useState<AIMasked['capability']>('text_vision')
+  const [visionVendor, setVisionVendor] = useState<VisionVendorId>('custom')
   const [visKey, setVisKey] = useState('')
   const [visTouchedKey, setVisTouchedKey] = useState(false)
 
@@ -104,12 +116,12 @@ function App() {
     setSettings(s)
     setPrimBase(s.primary_ai.base_url)
     setPrimModel(s.primary_ai.model)
-    setPrimCap(s.primary_ai.capability)
+    setPrimaryVendor(detectPrimaryVendor(s.primary_ai.base_url))
     setPrimKey('')
     setPrimTouchedKey(false)
     setVisBase(s.vision_ai.base_url)
     setVisModel(s.vision_ai.model)
-    setVisCap(s.vision_ai.capability)
+    setVisionVendor(detectVisionVendor(s.vision_ai.base_url))
     setVisKey('')
     setVisTouchedKey(false)
     setAssetsRoot(s.assets_root)
@@ -243,6 +255,25 @@ function App() {
     }
   }
 
+  const pickAssetsFolder = async () => {
+    setNetworkError(null)
+    setSettingsMsg(null)
+    try {
+      const r = await fetch('/api/system/pick-folder', { method: 'POST' })
+      const text = await r.text()
+      if (!r.ok) {
+        if (r.status === 501) {
+          throw new Error('本机无法弹出文件夹对话框，请直接在输入框中填写路径。')
+        }
+        throw new Error(text.replace(/\s+/g, ' ').slice(0, 240) || `HTTP ${r.status}`)
+      }
+      const body = JSON.parse(text) as { path?: string; cancelled?: boolean }
+      if (body.path) setAssetsRoot(body.path)
+    } catch (e) {
+      setNetworkError(e instanceof Error ? e.message : '选择文件夹失败')
+    }
+  }
+
   const saveAiSettings = async () => {
     setSettingsSaving(true)
     setSettingsMsg(null)
@@ -253,13 +284,11 @@ function App() {
       const primary_ai: Record<string, string> = {
         base_url: primBase,
         model: primModel,
-        capability: primCap,
       }
       if (primTouchedKey) primary_ai.api_key = primKey
       const vision_ai: Record<string, string> = {
         base_url: visBase,
         model: visModel,
-        capability: visCap,
       }
       if (visTouchedKey) vision_ai.api_key = visKey
 
@@ -461,13 +490,31 @@ function App() {
                         </p>
                         <label className="label">
                           <span>自定义素材根目录</span>
-                          <input
-                            className="input mono"
-                            value={assetsRoot}
-                            onChange={(e) => setAssetsRoot(e.target.value)}
-                            placeholder="示例：D:\\素材库\\MarketingAssets"
-                            autoComplete="off"
-                          />
+                          <div
+                            className="row-actions"
+                            style={{
+                              marginTop: '0.35rem',
+                              alignItems: 'stretch',
+                              gap: '0.45rem',
+                              width: '100%',
+                            }}
+                          >
+                            <input
+                              className="input mono"
+                              style={{ flex: 1, minWidth: 0 }}
+                              value={assetsRoot}
+                              onChange={(e) => setAssetsRoot(e.target.value)}
+                              placeholder="示例：D:\\素材库\\MarketingAssets"
+                              autoComplete="off"
+                            />
+                            <button
+                              type="button"
+                              className="btn slim"
+                              onClick={() => void pickAssetsFolder()}
+                            >
+                              选择文件夹…
+                            </button>
+                          </div>
                         </label>
                         <p className="hint">
                           当前生效：
@@ -481,41 +528,109 @@ function App() {
 
                       <fieldset className="fieldset">
                         <legend>主力 AI</legend>
+                        <div className="vendor-pills" role="group" aria-label="主力 AI 厂商">
+                          <button
+                            type="button"
+                            className={
+                              primaryVendor === 'glm'
+                                ? 'btn slim primary'
+                                : 'btn slim'
+                            }
+                            onClick={() => {
+                              setPrimaryVendor('glm')
+                              setPrimBase(GLM_CODING_BASE_CN)
+                              setPrimModel(GLM_MODEL_PRESETS[0])
+                            }}
+                          >
+                            GLM（智谱 Coding Plan）
+                          </button>
+                          <button
+                            type="button"
+                            className={
+                              primaryVendor === 'deepseek'
+                                ? 'btn slim primary'
+                                : 'btn slim'
+                            }
+                            onClick={() => {
+                              setPrimaryVendor('deepseek')
+                              setPrimBase(DEEPSEEK_OPENAI_BASE)
+                              setPrimModel(DEEPSEEK_MODEL_PRESETS[0])
+                            }}
+                          >
+                            DeepSeek
+                          </button>
+                          <button
+                            type="button"
+                            className={
+                              primaryVendor === 'custom'
+                                ? 'btn slim primary'
+                                : 'btn slim'
+                            }
+                            onClick={() => setPrimaryVendor('custom')}
+                          >
+                            自定义
+                          </button>
+                        </div>
+                        <p className="hint" style={{ marginTop: 0 }}>
+                          选择厂商会自动填入常见 Base URL；亦可切换到「自定义」自行改写。
+                          国内 Coding Plan 默认：
+                          <span className="mono small">{GLM_CODING_BASE_CN}</span>；
+                          国际常见：
+                          <span className="mono small">{GLM_CODING_BASE_INTL}</span>。
+                        </p>
                         <label className="label">
                           <span>Base URL</span>
                           <input
-                            className="input"
+                            className="input mono"
                             value={primBase}
-                            onChange={(e) => setPrimBase(e.target.value)}
-                            placeholder="例如 OpenAI 兼容接口地址"
+                            onChange={(e) => {
+                              const v = e.target.value
+                              setPrimBase(v)
+                              setPrimaryVendor(detectPrimaryVendor(v))
+                            }}
+                            placeholder="OpenAI 兼容 chat/completions 前缀，例如 …/v1"
                             autoComplete="off"
                           />
                         </label>
+                        <datalist id="preset-glm-models">
+                          {GLM_MODEL_PRESETS.map((m) => (
+                            <option key={m} value={m} />
+                          ))}
+                        </datalist>
+                        <datalist id="preset-ds-models">
+                          {DEEPSEEK_MODEL_PRESETS.map((m) => (
+                            <option key={m} value={m} />
+                          ))}
+                        </datalist>
                         <label className="label">
                           <span>模型名</span>
                           <input
-                            className="input"
+                            className="input mono"
                             value={primModel}
                             onChange={(e) => setPrimModel(e.target.value)}
+                            list={
+                              primaryVendor === 'glm'
+                                ? 'preset-glm-models'
+                                : primaryVendor === 'deepseek'
+                                  ? 'preset-ds-models'
+                                  : undefined
+                            }
+                            placeholder={
+                              primaryVendor === 'glm'
+                                ? '可输入或从列表选：glm-5.1 等'
+                                : primaryVendor === 'deepseek'
+                                  ? 'deepseek-v4-pro / deepseek-v4-flash'
+                                  : '与服务商文档一致的模型 ID'
+                            }
                             autoComplete="off"
                           />
                         </label>
-                        <label className="label">
-                          <span>能力</span>
-                          <select
-                            className="input"
-                            value={primCap}
-                            onChange={(e) =>
-                              setPrimCap(e.target.value as AIMasked['capability'])
-                            }
-                          >
-                            {CAP_OPTS.map((o) => (
-                              <option key={o.v} value={o.v}>
-                                {o.label}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
+                        <p className="hint" style={{ marginBottom: '0.65rem' }}>
+                          模型能力（系统自动判定）：
+                          <strong>
+                            {CAP_LABEL[inferModelCapability(primModel)]}
+                          </strong>
+                        </p>
                         <label className="label">
                           <span>
                             API Key
@@ -543,40 +658,103 @@ function App() {
 
                       <fieldset className="fieldset">
                         <legend>识图 AI</legend>
+                        <div className="vendor-pills" role="group" aria-label="识图厂商">
+                          <button
+                            type="button"
+                            className={
+                              visionVendor === 'qwen'
+                                ? 'btn slim primary'
+                                : 'btn slim'
+                            }
+                            onClick={() => {
+                              setVisionVendor('qwen')
+                              setVisBase(QWEN_DASHSCOPE_COMPAT_CN)
+                              setVisModel(QWEN_VISION_MODEL_PRESETS[0])
+                            }}
+                          >
+                            通义 Qwen（DashScope）
+                          </button>
+                          <button
+                            type="button"
+                            className={
+                              visionVendor === 'kimi'
+                                ? 'btn slim primary'
+                                : 'btn slim'
+                            }
+                            onClick={() => {
+                              setVisionVendor('kimi')
+                              setVisBase(KIMI_OPENAI_BASE_CN)
+                              setVisModel(KIMI_VISION_MODEL_PRESETS[0])
+                            }}
+                          >
+                            Kimi（Moonshot）
+                          </button>
+                          <button
+                            type="button"
+                            className={
+                              visionVendor === 'custom'
+                                ? 'btn slim primary'
+                                : 'btn slim'
+                            }
+                            onClick={() => setVisionVendor('custom')}
+                          >
+                            自定义
+                          </button>
+                        </div>
+                        <p className="hint" style={{ marginTop: 0 }}>
+                          Qwen 国际区可将 Base URL 换为{' '}
+                          <span className="mono small">
+                            https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+                          </span>
+                          ；Kimi 亦可用{' '}
+                          <span className="mono small">https://api.moonshot.ai/v1</span>。
+                        </p>
                         <label className="label">
                           <span>Base URL</span>
                           <input
-                            className="input"
+                            className="input mono"
                             value={visBase}
-                            onChange={(e) => setVisBase(e.target.value)}
+                            onChange={(e) => {
+                              const v = e.target.value
+                              setVisBase(v)
+                              setVisionVendor(detectVisionVendor(v))
+                            }}
                             autoComplete="off"
                           />
                         </label>
+                        <datalist id="preset-qwen-vision">
+                          {QWEN_VISION_MODEL_PRESETS.map((m) => (
+                            <option key={m} value={m} />
+                          ))}
+                        </datalist>
+                        <datalist id="preset-kimi-vision">
+                          {KIMI_VISION_MODEL_PRESETS.map((m) => (
+                            <option key={m} value={m} />
+                          ))}
+                        </datalist>
                         <label className="label">
                           <span>模型名</span>
                           <input
-                            className="input"
+                            className="input mono"
                             value={visModel}
                             onChange={(e) => setVisModel(e.target.value)}
+                            list={
+                              visionVendor === 'qwen'
+                                ? 'preset-qwen-vision'
+                                : visionVendor === 'kimi'
+                                  ? 'preset-kimi-vision'
+                                  : undefined
+                            }
+                            placeholder="与服务商文档一致的多模态模型 ID"
                             autoComplete="off"
                           />
                         </label>
-                        <label className="label">
-                          <span>能力</span>
-                          <select
-                            className="input"
-                            value={visCap}
-                            onChange={(e) =>
-                              setVisCap(e.target.value as AIMasked['capability'])
-                            }
-                          >
-                            {CAP_OPTS.map((o) => (
-                              <option key={o.v} value={o.v}>
-                                {o.label}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
+                        <p className="hint" style={{ marginBottom: '0.65rem' }}>
+                          模型能力（系统自动判定）：
+                          <strong>
+                            {CAP_LABEL[inferModelCapability(visModel)]}
+                          </strong>
+                        </p>
                         <label className="label">
                           <span>
                             API Key

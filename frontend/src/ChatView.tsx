@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { copyToClipboard, segmentAssistantContent } from './chatSegments'
 
 type ChatSession = {
   id: string
@@ -74,6 +75,60 @@ const CAP_LABEL: Record<AIMasked['capability'], string> = {
   text_vision: '文本 + 识图',
 }
 
+function BubbleCopyButton(props: { text: string }) {
+  const { text } = props
+  const [state, setState] = useState<'idle' | 'ok' | 'fail'>('idle')
+  return (
+    <button
+      type="button"
+      className="btn slim bubble-copy"
+      disabled={!text.trim()}
+      onClick={() => {
+        void (async () => {
+          const ok = await copyToClipboard(text)
+          setState(ok ? 'ok' : 'fail')
+          window.setTimeout(() => setState('idle'), ok ? 1600 : 2400)
+        })()
+      }}
+    >
+      {state === 'ok' ? '已复制' : state === 'fail' ? '复制失败' : '复制'}
+    </button>
+  )
+}
+
+function AssistantSegmentBubbles(props: { messageId: string; content: string }) {
+  const { messageId, content } = props
+  const segs = useMemo(() => segmentAssistantContent(content), [content])
+  return (
+    <>
+      {segs.map((seg, i) => {
+        const chatRole =
+          seg.kind === 'xhs'
+            ? '小红书推文'
+            : segs.length > 1
+              ? '说明与对话'
+              : '主力 AI'
+        return (
+          <div
+            key={`${messageId}-${i}-${seg.kind}`}
+            className={
+              seg.kind === 'xhs'
+                ? 'bubble bubble-assistant bubble-xhs'
+                : 'bubble bubble-assistant'
+            }
+          >
+            <div className="bubble-toolbar">
+              <div className="bubble-role">{chatRole}</div>
+              <BubbleCopyButton text={seg.text} />
+            </div>
+            <div className="bubble-body">{seg.text}</div>
+          </div>
+        )
+      })}
+    </>
+  )
+}
+
 export function ChatView(props: {
   notifyError: (message: string | null) => void
   onAfterAssistantReply?: () => void
@@ -81,6 +136,7 @@ export function ChatView(props: {
 }) {
   const { notifyError, onAfterAssistantReply, onOpenSettings } = props
   const bottomRef = useRef<HTMLDivElement | null>(null)
+  const sendReqIdRef = useRef(0)
 
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [retentionMs, setRetentionMs] = useState(7 * 24 * 60 * 60 * 1000)
@@ -342,10 +398,29 @@ export function ChatView(props: {
   const send = async () => {
     const text = draft.trim()
     if (!text || !activeId || !canPrimaryChat) return
+
+    const reqId = ++sendReqIdRef.current
+    const ts = Date.now()
+    const optimisticUser: ChatMsg = {
+      id: `optimistic-user-${ts}`,
+      role: 'user',
+      content: text,
+      created_at_ms: ts,
+    }
+    const optimisticAssistant: ChatMsg = {
+      id: `optimistic-assistant-${ts}`,
+      role: 'assistant',
+      content: '主力 AI 正在生成回复…',
+      created_at_ms: ts,
+    }
+
     setSending(true)
     setLastAssistErr(null)
     setLastUsedVision(false)
     notifyError(null)
+    setMessages((prev) => [...prev, optimisticUser, optimisticAssistant])
+    setDraft('')
+
     try {
       const r = await fetch(`/api/chat/sessions/${activeId}/messages`, {
         method: 'POST',
@@ -357,6 +432,7 @@ export function ChatView(props: {
       })
       if (!r.ok) throw new Error(await r.text())
       const body = await r.json()
+      if (sendReqIdRef.current !== reqId) return
       const outMsgs = Array.isArray((body as { messages?: unknown }).messages)
         ? (body as { messages: ChatMsg[] }).messages
         : []
@@ -374,12 +450,16 @@ export function ChatView(props: {
         )
       }
       setLastUsedVision(Boolean((body as { used_vision?: boolean }).used_vision))
-      setDraft('')
       onAfterAssistantReply?.()
     } catch (e) {
+      if (sendReqIdRef.current !== reqId) return
       notifyError(e instanceof Error ? e.message : '发送失败')
+      setMessages((prev) =>
+        prev.filter((m) => m.id !== optimisticUser.id && m.id !== optimisticAssistant.id),
+      )
+      setDraft(text)
     } finally {
-      setSending(false)
+      if (sendReqIdRef.current === reqId) setSending(false)
     }
   }
 
@@ -492,19 +572,16 @@ export function ChatView(props: {
                 {messages.length === 0 ? (
                   <p className="hint">还没有消息，试试在下方输入你的需求。</p>
                 ) : (
-                  messages.map((m) => (
-                    <div
-                      key={m.id}
-                      className={
-                        m.role === 'user' ? 'bubble bubble-user' : 'bubble bubble-assistant'
-                      }
-                    >
-                      <div className="bubble-role">
-                        {m.role === 'user' ? '我' : '主力 AI'}
+                  messages.map((m) =>
+                    m.role === 'user' ? (
+                      <div key={m.id} className="bubble bubble-user">
+                        <div className="bubble-role">我</div>
+                        <div className="bubble-body">{m.content}</div>
                       </div>
-                      <div className="bubble-body">{m.content}</div>
-                    </div>
-                  ))
+                    ) : (
+                      <AssistantSegmentBubbles key={m.id} messageId={m.id} content={m.content} />
+                    ),
+                  )
                 )}
                 <div ref={bottomRef} />
               </div>
@@ -631,7 +708,7 @@ export function ChatView(props: {
                     !canPrimaryChat
                       ? '请先在右上角「设置」或上方提示中补齐对话 AI 后再发送…'
                       : sending
-                        ? '等待模型回复…'
+                        ? '上方已显示你的消息，请等待 AI 完成回复…'
                         : '描述你的小红书笔记诉求、卖点、口吻等（Shift+Enter 换行）'
                   }
                   onChange={(e) => setDraft(e.target.value)}
@@ -651,7 +728,7 @@ export function ChatView(props: {
                     disabled={sending || !activeId || !canPrimaryChat || draft.trim().length === 0}
                     onClick={() => void send()}
                   >
-                    {sending ? '发送中…' : '发送（Enter）'}
+                    {sending ? '回复中…' : '发送（Enter）'}
                   </button>
                   <span className="muted small composer-hint-ai">
                     走 OpenAI 兼容 <code>/chat/completions</code>。

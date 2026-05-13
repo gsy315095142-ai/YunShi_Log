@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, Literal
@@ -10,6 +11,29 @@ from app import paths
 from app.json_io import read_json, write_json_atomic
 
 Capability = Literal["text", "text_vision"]
+
+_GLM4V = re.compile(r"glm-4(\.\d+)?v", re.I)
+
+
+def infer_model_capability(model: str) -> Capability:
+    """根据模型 id 粗判能力；与前端 `aiPresets.ts` 保持规则一致。"""
+    m = (model or "").strip().lower()
+    if not m:
+        return "text"
+    if "multimodal" in m or "vision" in m:
+        return "text_vision"
+    if "-vl" in m or "qwen-vl" in m or "qwen3-vl" in m or "qwen2.5-vl" in m:
+        return "text_vision"
+    if "kimi-k2" in m:
+        return "text_vision"
+    if "gpt-4o" in m:
+        return "text_vision"
+    if _GLM4V.search(m) or "glm-4v" in m:
+        return "text_vision"
+    if "qwen3.6-plus" in m:
+        return "text_vision"
+    return "text"
+
 
 SETTINGS_VERSION = 1
 SETTINGS_FILENAME = "user_settings.json"
@@ -52,9 +76,12 @@ def load_settings() -> UserSettingsFile:
     raw = read_json(settings_path(), {})
     raw = _normalize_disk(raw if isinstance(raw, dict) else {})
     try:
-        return UserSettingsFile.model_validate(raw)
+        s = UserSettingsFile.model_validate(raw)
     except Exception:
-        return UserSettingsFile()
+        s = UserSettingsFile()
+    s.primary_ai.capability = infer_model_capability(s.primary_ai.chat_model)
+    s.vision_ai.capability = infer_model_capability(s.vision_ai.chat_model)
+    return s
 
 
 def save_settings(settings: UserSettingsFile) -> None:
@@ -82,8 +109,6 @@ def merge_ai_update(
         out.base_url = body["base_url"].strip()
     if "model" in body and isinstance(body["model"], str):
         out.chat_model = body["model"].strip()
-    if "capability" in body and body["capability"] in ("text", "text_vision"):
-        out.capability = body["capability"]  # type: ignore[assignment]
     if "api_key" in body:
         key = body["api_key"]
         if key is None:
@@ -164,11 +189,15 @@ def read_selected_skill_text(settings: UserSettingsFile) -> tuple[str, list[str]
 def apply_settings_patch(body: dict[str, Any]) -> UserSettingsFile:
     s = load_settings()
     if "primary_ai" in body and isinstance(body["primary_ai"], dict):
-        s.primary_ai = merge_ai_update(s.primary_ai, body["primary_ai"])
+        patch = {k: v for k, v in body["primary_ai"].items() if k != "capability"}
+        s.primary_ai = merge_ai_update(s.primary_ai, patch)
     if "vision_ai" in body and isinstance(body["vision_ai"], dict):
-        s.vision_ai = merge_ai_update(s.vision_ai, body["vision_ai"])
+        patch = {k: v for k, v in body["vision_ai"].items() if k != "capability"}
+        s.vision_ai = merge_ai_update(s.vision_ai, patch)
     if "assets_root" in body and isinstance(body["assets_root"], str):
         s.assets_root = body["assets_root"].strip()
+    s.primary_ai.capability = infer_model_capability(s.primary_ai.chat_model)
+    s.vision_ai.capability = infer_model_capability(s.vision_ai.chat_model)
     s = clean_deselected(s)
     try:
         resolved_assets_root(s).mkdir(parents=True, exist_ok=True)

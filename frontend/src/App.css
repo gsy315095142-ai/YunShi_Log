@@ -510,6 +510,13 @@
   color: var(--text-h);
 }
 
+.vendor-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.25rem 0 0.5rem;
+}
+
 .label {
   display: flex;
   flex-direction: column;
@@ -1154,6 +1161,31 @@
 .bubble-assistant {
   align-self: flex-start;
   background: color-mix(in srgb, var(--border) 12%, transparent);
+}
+
+.bubble-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.bubble-toolbar .bubble-role {
+  margin-bottom: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.bubble-copy {
+  flex-shrink: 0;
+  padding: 0.12rem 0.5rem;
+  font-size: 0.72rem;
+}
+
+.bubble-xhs {
+  border-color: color-mix(in srgb, var(--accent-border) 45%, var(--border));
+  background: color-mix(in srgb, var(--accent-soft) 14%, var(--bg));
 }
 
 .bubble-role {

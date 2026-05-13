@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
@@ -21,12 +23,44 @@ from app.user_settings import (
     skill_rows,
 )
 
+_FOLDER_PICK_EXECUTOR = ThreadPoolExecutor(max_workers=1)
+
 
 class SkillSelectionPayload(BaseModel):
     selected: list[str] = Field(default_factory=list)
 
 
 def register_settings_routes(app: FastAPI) -> None:
+    def _tk_pick_folder_sync() -> str:
+        try:
+            import tkinter as tk
+            from tkinter import filedialog
+        except Exception as exc:  # noqa: BLE001
+            raise RuntimeError("当前环境无法打开图形文件夹对话框。") from exc
+        root = tk.Tk()
+        root.withdraw()
+        root.attributes("-topmost", True)
+        try:
+            picked = filedialog.askdirectory(title="选择素材根目录")
+            return (picked or "").strip()
+        finally:
+            root.destroy()
+
+    @app.post("/api/system/pick-folder")
+    async def pick_folder():
+        loop = asyncio.get_running_loop()
+        try:
+            path = await loop.run_in_executor(
+                _FOLDER_PICK_EXECUTOR, _tk_pick_folder_sync
+            )
+        except RuntimeError as exc:
+            raise HTTPException(status_code=501, detail=str(exc)) from exc
+        except Exception as exc:  # noqa: BLE001
+            raise HTTPException(
+                status_code=500, detail=f"文件夹选择失败：{exc}"
+            ) from exc
+        return {"path": path, "cancelled": path == ""}
+
     @app.get("/api/settings")
     async def get_settings():
         """每次请求读取磁盘，保证与其它进程改写或手动改文件后能尽快对齐。"""
