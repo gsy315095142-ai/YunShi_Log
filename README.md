@@ -4,23 +4,56 @@
 
 ## 当前状态
 
-- 仓库已清空旧代码，保留 Git 历史。
-- **需求与设计文档已完成**，见 [`docs/PROJECT_DESIGN.md`](docs/PROJECT_DESIGN.md)。
-- 代码开发尚未开始。
+- Phase 0～4 第一版骨架已搭建（后端 API + SQLite + 前端 SPA）
+- 需求与设计见 [`docs/PROJECT_DESIGN.md`](docs/PROJECT_DESIGN.md)
 
-## 文档
+## 本地启动
 
-| 文档 | 说明 |
-|------|------|
-| [docs/PROJECT_DESIGN.md](docs/PROJECT_DESIGN.md) | 需求结论、页面设计、数据模型、API、开发计划 |
+```bat
+start-dev.bat
+```
 
-## 技术方向（已定）
+或分别启动：
 
-- 后端 API + SQLite + 前端单页
-- 手机优先布局
-- 后期部署阿里云
+```bat
+# 后端
+cd backend
+run-backend.bat
 
-## 默认管理员（开发后生效）
+# 前端
+cd frontend
+npm install
+npm run dev
+```
+
+- 前端：http://127.0.0.1:5173
+- 后端：http://127.0.0.1:8000
+- API 文档：http://127.0.0.1:8000/docs
+
+## 默认管理员
 
 - 用户名：`Guosy`
 - 密码：`1234567890`
+
+## 项目结构
+
+```
+backend/app/
+  auth/       登录注册 JWT
+  profile/    个人信息
+  records/    每日记录
+  fortune/    农历/星座/五行/生肖推算（纯函数）
+  ai/         AI 配置与聊天
+    providers/  DeepSeek、智谱独立适配
+  search/     联网搜索占位（待对接）
+  db/         SQLite 模型与初始化
+frontend/src/
+  pages/      各页面
+  api/        按域拆分的 API 客户端
+  components/ 布局、路由守卫
+```
+
+## 待完成
+
+- 联网搜索对接（阿里云已部署的搜索工具）
+- 生产环境部署文档与配置
