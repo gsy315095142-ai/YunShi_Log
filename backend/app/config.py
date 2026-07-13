@@ -20,3 +20,9 @@ CORS_ORIGINS = os.getenv(
     "CORS_ORIGINS",
     "http://localhost:5173,http://127.0.0.1:5173",
 ).split(",")
+
+# SearXNG 联网搜索（阿里云同机部署默认 127.0.0.1:8888）
+SEARXNG_BASE_URL = os.getenv("SEARXNG_BASE_URL", "http://127.0.0.1:8888")
+SEARXNG_ENABLED = os.getenv("SEARXNG_ENABLED", "true").lower() in ("1", "true", "yes")
+SEARXNG_MAX_RESULTS = int(os.getenv("SEARXNG_MAX_RESULTS", "5"))
+SEARXNG_TIMEOUT_SEC = float(os.getenv("SEARXNG_TIMEOUT_SEC", "10"))

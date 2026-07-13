@@ -55,5 +55,19 @@ frontend/src/
 
 ## 待完成
 
-- 联网搜索对接（阿里云已部署的搜索工具）
 - 生产环境部署文档与配置
+
+## 联网搜索（SearXNG）
+
+后端已对接阿里云同机 SearXNG，默认地址 `http://127.0.0.1:8888`。
+
+环境变量（可选）：
+
+| 变量 | 默认值 | 说明 |
+|------|--------|------|
+| `SEARXNG_BASE_URL` | `http://127.0.0.1:8888` | SearXNG 地址 |
+| `SEARXNG_ENABLED` | `true` | 是否启用搜索 |
+| `SEARXNG_MAX_RESULTS` | `5` | 注入 AI 的结果条数 |
+| `SEARXNG_TIMEOUT_SEC` | `10` | 请求超时秒数 |
+
+本地开发若无 SearXNG，搜索失败会自动跳过，不影响 AI 聊天。
