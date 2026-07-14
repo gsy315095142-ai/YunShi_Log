@@ -1,4 +1,5 @@
 import { clearToken, getToken } from '../utils/token'
+import { appPath } from '../utils/basePath'
 
 export class ApiError extends Error {
   status: number
@@ -21,8 +22,9 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
   const res = await fetch(path, { ...init, headers })
   if (res.status === 401) {
     clearToken()
-    if (!window.location.pathname.startsWith('/login')) {
-      window.location.href = '/login'
+    const loginPath = appPath('login')
+    if (!window.location.pathname.startsWith(loginPath.replace(/\/$/, ''))) {
+      window.location.href = loginPath
     }
   }
   const data = await res.json().catch(() => ({}))
