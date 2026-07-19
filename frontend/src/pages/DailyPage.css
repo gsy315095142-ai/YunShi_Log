@@ -17,6 +17,16 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.calendar-card .month-nav button:hover {
+  background: #e0d4be;
+}
+
+.calendar-card .month-nav button:active {
+  transform: scale(0.92);
 }
 
 .weekday-row,
@@ -33,6 +43,11 @@
   padding: 4px 0;
 }
 
+.weekday-row span:first-child,
+.weekday-row span:last-child {
+  color: #b08560;
+}
+
 .cell {
   min-height: 64px;
   border-radius: 10px;
@@ -46,17 +61,38 @@
 }
 
 .cell.day {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding: 4px;
   cursor: pointer;
   text-align: left;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.cell.day:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(44, 36, 22, 0.12);
+  border-color: #d9c9a8;
+}
+
+.cell.day.weekend .day-num {
+  color: #b08560;
 }
 
 .cell.day.has-record {
-  background: #faf6ee;
-  border-color: #d9c9a8;
+  background: #faf3e6;
+  border-left: 3px solid #c9954a;
+}
+
+.cell.day.has-record .day-num {
+  font-weight: 600;
+}
+
+.cell.day.today {
+  background: linear-gradient(135deg, #fdf6ec 0%, #f8edd8 100%);
+  border-color: #d4af37;
 }
 
 .cell.day.today .day-num {
@@ -64,8 +100,25 @@
   font-weight: 700;
 }
 
+.cell.day.today::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #d4af37;
+}
+
 .cell.day.selected {
-  outline: 2px solid #8b5a2b;
+  box-shadow: 0 0 0 2px #8b5a2b, 0 4px 12px rgba(139, 90, 43, 0.2);
+  border-color: #8b5a2b;
+}
+
+.cell.day.selected:hover {
+  transform: none;
 }
 
 .day-num {

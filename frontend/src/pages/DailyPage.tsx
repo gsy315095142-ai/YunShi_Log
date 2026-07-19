@@ -139,7 +139,7 @@ export default function DailyPage() {
                   type="button"
                   className={`cell day ${info ? 'has-record' : ''} ${isToday ? 'today' : ''} ${
                     selectedDate === date ? 'selected' : ''
-                  }`}
+                  } ${idx % 7 === 0 || idx % 7 === 6 ? 'weekend' : ''}`}
                   onClick={() => openDay(day)}
                 >
                   <span className="day-num">{day}</span>
