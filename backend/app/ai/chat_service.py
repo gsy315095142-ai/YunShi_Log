@@ -11,7 +11,7 @@ from app.search.service import search_web
 
 
 async def send_chat(db: Session, user: User, body: ChatRequest) -> ChatResponse:
-    provider, api_key, base_url = require_chat_credentials(db, user)
+    provider, api_key, base_url, model = require_chat_credentials(db, user)
 
     user_msg = AIChatMessage(
         user_id=user.id,
@@ -28,7 +28,7 @@ async def send_chat(db: Session, user: User, body: ChatRequest) -> ChatResponse:
     messages = build_chat_messages(body.message, day_context, search_result)
 
     try:
-        reply_text = await call_provider(provider, api_key, base_url, messages)
+        reply_text = await call_provider(provider, api_key, base_url, messages, model)
     except HTTPException:
         raise
     except Exception as exc:

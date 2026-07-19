@@ -4,12 +4,15 @@ export interface AIProvider {
   id: string
   name: string
   default_base_url: string
+  default_model: string
+  models: string[]
 }
 
 export interface AISettings {
   provider: string
   api_base_url: string
   api_key_masked: string | null
+  model: string
 }
 
 export interface ChatMessage {
@@ -32,6 +35,7 @@ export async function saveAISettings(body: {
   provider: string
   api_key?: string
   api_base_url?: string
+  model?: string
 }) {
   return apiFetch<AISettings>('/api/v1/ai/settings', {
     method: 'PUT',

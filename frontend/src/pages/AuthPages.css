@@ -4,10 +4,10 @@
   justify-content: center;
   padding: 20px 16px 32px;
   background:
-    radial-gradient(ellipse 120% 80% at 50% -20%, rgba(212, 175, 55, 0.12), transparent 50%),
-    radial-gradient(ellipse 80% 60% at 100% 50%, rgba(58, 110, 165, 0.1), transparent 45%),
-    radial-gradient(ellipse 70% 50% at 0% 80%, rgba(61, 139, 110, 0.1), transparent 45%),
-    linear-gradient(165deg, #1a1510 0%, #2c2416 35%, #3d3226 100%);
+    radial-gradient(ellipse 120% 80% at 50% -20%, rgba(167, 139, 250, 0.15), transparent 50%),
+    radial-gradient(ellipse 80% 60% at 100% 50%, rgba(124, 58, 237, 0.12), transparent 45%),
+    radial-gradient(ellipse 70% 50% at 0% 80%, rgba(91, 33, 182, 0.1), transparent 45%),
+    linear-gradient(165deg, #0f0a1a 0%, #1e1632 35%, #2e2440 100%);
 }
 
 .auth-shell {
@@ -23,7 +23,7 @@
   position: relative;
   text-align: center;
   padding: 28px 12px 8px;
-  color: #f8f3e8;
+  color: #f5f0ff;
 }
 
 .auth-hero-orbit {
@@ -39,21 +39,21 @@
   position: absolute;
   width: 200px;
   height: 200px;
-  border: 1px solid rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(167, 139, 250, 0.15);
   border-radius: 50%;
 }
 
 .auth-orbit-ring--inner {
   width: 140px;
   height: 140px;
-  border-color: rgba(166, 124, 82, 0.2);
+  border-color: rgba(155, 109, 224, 0.2);
 }
 
 .auth-brand {
   margin: 0 0 8px;
   font-size: 0.8rem;
   letter-spacing: 0.35em;
-  color: rgba(232, 215, 184, 0.75);
+  color: rgba(196, 181, 224, 0.75);
   text-transform: uppercase;
 }
 
@@ -62,7 +62,7 @@
   font-size: 1.5rem;
   font-weight: 600;
   letter-spacing: 0.08em;
-  background: linear-gradient(135deg, #f8f3e8 0%, #e8d7b8 50%, #d4af37 100%);
+  background: linear-gradient(135deg, #f5f0ff 0%, #c4b5e0 50%, #a78bfa 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -72,7 +72,7 @@
   margin: 0 0 20px;
   font-size: 0.85rem;
   line-height: 1.5;
-  color: rgba(232, 215, 184, 0.65);
+  color: rgba(196, 181, 224, 0.65);
   padding: 0 8px;
 }
 
@@ -105,17 +105,17 @@
 
 .auth-element-name {
   font-size: 0.65rem;
-  color: rgba(232, 215, 184, 0.5);
+  color: rgba(196, 181, 224, 0.5);
 }
 
 /* —— 登录卡片 —— */
 .auth-card {
-  background: rgba(255, 252, 245, 0.97);
+  background: rgba(252, 250, 255, 0.97);
   border-radius: 20px;
   padding: 24px 20px;
   box-shadow:
     0 16px 48px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(212, 175, 55, 0.12);
+    0 0 0 1px rgba(167, 139, 250, 0.12);
 }
 
 .auth-card-title {
@@ -123,7 +123,7 @@
   text-align: center;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #2c2416;
+  color: #2d2438;
 }
 
 .auth-card form {
@@ -138,26 +138,26 @@
   gap: 6px;
   font-size: 0.88rem;
   font-weight: 500;
-  color: #5c4f3a;
+  color: #5a4d6e;
 }
 
 .auth-card input {
   padding: 12px 14px;
-  border: 1px solid #e5dcc8;
+  border: 1px solid #d8cee8;
   border-radius: 12px;
   font-size: 1rem;
-  background: #fffdf8;
+  background: #fdfcff;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .auth-card input:focus {
   outline: none;
-  border-color: #c9a227;
-  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.15);
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
 }
 
 .auth-card input::placeholder {
-  color: #b8a88e;
+  color: #b0a0c8;
 }
 
 .auth-submit {
@@ -168,9 +168,9 @@
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.06em;
-  color: #fffef8;
-  background: linear-gradient(135deg, #8b5a2b 0%, #a67c52 40%, #6b4423 100%);
-  box-shadow: 0 4px 16px rgba(139, 90, 43, 0.35);
+  color: #ffffff;
+  background: linear-gradient(135deg, #7c3aed 0%, #9b6de0 40%, #5b2e9e 100%);
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35);
   cursor: pointer;
   transition: opacity 0.2s, transform 0.15s;
 }
@@ -195,11 +195,11 @@
   margin: 18px 0 0;
   text-align: center;
   font-size: 0.88rem;
-  color: #7a6f5c;
+  color: #8b7faa;
 }
 
 .hint a {
-  color: #8b5a2b;
+  color: #7c3aed;
   font-weight: 500;
   text-decoration: none;
 }
@@ -212,6 +212,6 @@
   margin: 0;
   text-align: center;
   font-size: 0.75rem;
-  color: rgba(232, 215, 184, 0.45);
+  color: rgba(196, 181, 224, 0.45);
   letter-spacing: 0.12em;
 }

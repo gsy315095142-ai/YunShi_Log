@@ -13,7 +13,7 @@
 
 .calendar-card .month-nav button {
   border: none;
-  background: #efe7d8;
+  background: #ede8f7;
   width: 36px;
   height: 36px;
   border-radius: 10px;
@@ -22,7 +22,7 @@
 }
 
 .calendar-card .month-nav button:hover {
-  background: #e0d4be;
+  background: #ddd5f0;
 }
 
 .calendar-card .month-nav button:active {
@@ -39,19 +39,14 @@
 .weekday-row span {
   text-align: center;
   font-size: 0.8rem;
-  color: #7a6f5c;
+  color: #8b7faa;
   padding: 4px 0;
-}
-
-.weekday-row span:first-child,
-.weekday-row span:last-child {
-  color: #b08560;
 }
 
 .cell {
   min-height: 64px;
   border-radius: 10px;
-  border: 1px solid #ece4d6;
+  border: 1px solid #e9e0f7;
   background: #fff;
 }
 
@@ -73,17 +68,13 @@
 
 .cell.day:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(44, 36, 22, 0.12);
-  border-color: #d9c9a8;
-}
-
-.cell.day.weekend .day-num {
-  color: #b08560;
+  box-shadow: 0 4px 12px rgba(46, 36, 56, 0.12);
+  border-color: #c8b8e8;
 }
 
 .cell.day.has-record {
-  background: #faf3e6;
-  border-left: 3px solid #c9954a;
+  background: #f3eefb;
+  border-left: 3px solid #9b6de0;
 }
 
 .cell.day.has-record .day-num {
@@ -91,12 +82,12 @@
 }
 
 .cell.day.today {
-  background: linear-gradient(135deg, #fdf6ec 0%, #f8edd8 100%);
-  border-color: #d4af37;
+  background: linear-gradient(135deg, #f5f0ff 0%, #ede4ff 100%);
+  border-color: #a78bfa;
 }
 
 .cell.day.today .day-num {
-  color: #8b5a2b;
+  color: #7c3aed;
   font-weight: 700;
 }
 
@@ -109,12 +100,12 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #d4af37;
+  background: #a78bfa;
 }
 
 .cell.day.selected {
-  box-shadow: 0 0 0 2px #8b5a2b, 0 4px 12px rgba(139, 90, 43, 0.2);
-  border-color: #8b5a2b;
+  box-shadow: 0 0 0 2px #7c3aed, 0 4px 12px rgba(124, 58, 237, 0.2);
+  border-color: #7c3aed;
 }
 
 .cell.day.selected:hover {
@@ -127,7 +118,7 @@
 
 .preview {
   font-size: 0.65rem;
-  color: #7a6f5c;
+  color: #8b7faa;
   line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -147,7 +138,7 @@
 }
 
 .record-list li {
-  border: 1px solid #ece4d6;
+  border: 1px solid #e9e0f7;
   border-radius: 10px;
   padding: 10px;
   margin-bottom: 8px;
@@ -166,7 +157,7 @@
 
 .actions button {
   border: none;
-  background: #efe7d8;
+  background: #ede8f7;
   padding: 6px 10px;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -179,7 +170,7 @@
 .day-panel textarea {
   width: 100%;
   box-sizing: border-box;
-  border: 1px solid #ddd4c4;
+  border: 1px solid #d8cde8;
   border-radius: 10px;
   padding: 10px;
   margin-bottom: 10px;
@@ -192,12 +183,12 @@
   padding: 12px;
   border: none;
   border-radius: 10px;
-  background: #8b5a2b;
+  background: #7c3aed;
   color: #fff;
 }
 
 .empty-tip, .loading, .msg {
-  color: #7a6f5c;
+  color: #8b7faa;
   font-size: 0.9rem;
 }
 
@@ -205,5 +196,5 @@
   background: #fff;
   border-radius: 14px;
   padding: 16px;
-  box-shadow: 0 2px 10px rgba(44, 36, 22, 0.06);
+  box-shadow: 0 2px 10px rgba(46, 36, 56, 0.06);
 }

@@ -61,6 +61,7 @@ class AISettings(Base):
     provider: Mapped[str] = mapped_column(String(32), default="deepseek")
     api_key_encrypted: Mapped[str | None] = mapped_column(Text, nullable=True)
     api_base_url: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    model: Mapped[str | None] = mapped_column(String(64), nullable=True)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now(), onupdate=func.now()
     )

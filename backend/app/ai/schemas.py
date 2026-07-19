@@ -7,12 +7,14 @@ class AISettingsUpdateRequest(BaseModel):
     provider: str = Field(pattern="^(deepseek|zhipu)$")
     api_key: str | None = None
     api_base_url: str | None = None
+    model: str | None = None
 
 
 class AISettingsResponse(BaseModel):
     provider: str
     api_base_url: str
     api_key_masked: str | None
+    model: str
 
 
 class ChatRequest(BaseModel):
