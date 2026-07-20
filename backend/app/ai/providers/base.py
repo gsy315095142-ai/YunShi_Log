@@ -15,15 +15,15 @@ PROVIDER_DEFAULTS: dict[str, ProviderDefaults] = {
         id="deepseek",
         name="DeepSeek",
         default_base_url="https://api.deepseek.com",
-        default_model="deepseek-chat",
-        models=["deepseek-chat", "deepseek-reasoner"],
+        default_model="deepseek-v4-flash",
+        models=["deepseek-v4-pro", "deepseek-v4-flash"],
     ),
     "zhipu": ProviderDefaults(
         id="zhipu",
         name="智谱",
         default_base_url="https://open.bigmodel.cn/api/paas/v4",
-        default_model="glm-4.5-flash",
-        models=["glm-4.5-flash", "glm-5.2"],
+        default_model="glm-5.1",
+        models=["glm-5.2", "glm-5.1"],
     ),
 }
 

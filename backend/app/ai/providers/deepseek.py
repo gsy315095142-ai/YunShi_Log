@@ -8,7 +8,7 @@ async def chat_completion(
     api_key: str,
     messages: list[dict],
     base_url: str | None = None,
-    model: str = "deepseek-chat",
+    model: str = "deepseek-v4-flash",
 ) -> dict:
     """返回 {"content": 回复正文, "reasoning": 思考内容或 None}。
 

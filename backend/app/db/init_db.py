@@ -9,6 +9,7 @@ from app.db.models import User
 # 历史表新增列的轻量迁移：(表名, 列名, 列定义)
 _COLUMN_MIGRATIONS = [
     ("ai_chat_messages", "reasoning", "TEXT"),
+    ("ai_settings", "model", "VARCHAR(64)"),
 ]
 
 
