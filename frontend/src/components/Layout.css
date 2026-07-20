@@ -111,11 +111,11 @@
   height: 22px;
 }
 
-/* —— 今日记录编辑态：隐藏底部 Tab 栏，聚焦编辑 —— */
-body.record-editing .tab-bar {
+/* —— 输入聚焦/编辑记录时：隐藏底部 Tab 栏，避免被键盘顶起 —— */
+body.hide-tabbar .tab-bar {
   display: none;
 }
 
-body.record-editing .app-main {
+body.hide-tabbar .app-main {
   padding-bottom: 16px;
 }

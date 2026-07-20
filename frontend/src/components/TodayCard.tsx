@@ -28,12 +28,6 @@ export default function TodayCard({ info, onCreate, onUpdate, onDelete, onFortun
     if (!editing) setDraft(info?.content ?? '')
   }, [info?.content, editing])
 
-  // 编辑态时隐藏全局底部 Tab 栏，聚焦编辑（CSS 见 Layout.css）
-  useEffect(() => {
-    document.body.classList.toggle('record-editing', editing)
-    return () => document.body.classList.remove('record-editing')
-  }, [editing])
-
   if (!info) return null
 
   const d = new Date(`${info.date}T00:00:00`)

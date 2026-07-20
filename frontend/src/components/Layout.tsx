@@ -26,6 +26,28 @@ export default function Layout({ children }: LayoutProps) {
       .catch(() => {})
   }, [])
 
+  // 输入框获得焦点（手机键盘弹出）时隐藏底部 Tab 栏，避免被键盘顶起遮挡输入；
+  // 失焦（键盘收起）后恢复。焦点在输入框之间跳转时不闪烁。
+  useEffect(() => {
+    const isFormEl = (el: EventTarget | null) =>
+      el instanceof HTMLElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName)
+    const onFocusIn = (e: FocusEvent) => {
+      if (isFormEl(e.target)) document.body.classList.add('hide-tabbar')
+    }
+    const onFocusOut = () => {
+      setTimeout(() => {
+        if (!isFormEl(document.activeElement)) document.body.classList.remove('hide-tabbar')
+      }, 50)
+    }
+    document.addEventListener('focusin', onFocusIn)
+    document.addEventListener('focusout', onFocusOut)
+    return () => {
+      document.removeEventListener('focusin', onFocusIn)
+      document.removeEventListener('focusout', onFocusOut)
+      document.body.classList.remove('hide-tabbar')
+    }
+  }, [])
+
   const logout = () => {
     clearToken()
     navigate('/login')
