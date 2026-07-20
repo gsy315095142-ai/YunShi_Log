@@ -49,6 +49,7 @@ class FortuneResult:
     chinese_zodiac: str | None
     five_element: str | None
     nayin: str | None
+    day_master: str | None
     birth_time_display: str | None
 
 
@@ -87,6 +88,18 @@ def calc_nayin(lunar_year: int) -> str:
     """纳音五行（完整名称，如「大林木」）：按农历年六十甲子序号两两一组取纳音。"""
     jiazi_index = (lunar_year - 4) % 60
     return NAYIN[jiazi_index // 2]
+
+
+# 日柱推算锚点：1900-01-01 为甲戌日（六十甲子序号 10），已经 2000-01-01 戊午日验证
+_DAY_ANCHOR = date(1900, 1, 1)
+_DAY_ANCHOR_INDEX = 10
+
+
+def calc_day_master(birth_date: date) -> str:
+    """日主（日柱天干 + 五行，如「甲木」）：以公历日期推日柱，取天干对应五行。"""
+    jiazi_index = (_DAY_ANCHOR_INDEX + (birth_date - _DAY_ANCHOR).days) % 60
+    stem = STEMS[jiazi_index % 10]
+    return f"{stem}{STEM_ELEMENT[stem]}"
 
 
 MONTH_NAMES = {
@@ -130,6 +143,7 @@ def compute_fortune(birth_date: date | None, birth_time: time | None) -> Fortune
             chinese_zodiac=None,
             five_element=None,
             nayin=None,
+            day_master=None,
             birth_time_display="未填" if birth_time is None else birth_time.strftime("%H:%M"),
         )
 
@@ -143,5 +157,6 @@ def compute_fortune(birth_date: date | None, birth_time: time | None) -> Fortune
         chinese_zodiac=calc_chinese_zodiac(lunar_year),
         five_element=calc_five_element(lunar_year),
         nayin=calc_nayin(lunar_year),
+        day_master=calc_day_master(birth_date),
         birth_time_display="未填" if birth_time is None else birth_time.strftime("%H:%M"),
     )

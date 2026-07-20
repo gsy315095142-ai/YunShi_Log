@@ -72,6 +72,86 @@
   line-height: 1.4;
 }
 
+/* —— 五行说明按钮与弹窗 —— */
+.info-btn {
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  font-size: 0.7rem;
+  padding: 0 0 0 3px;
+  line-height: 1;
+  vertical-align: baseline;
+  transition: color 0.2s ease;
+}
+
+.info-btn:hover {
+  color: var(--color-primary);
+}
+
+.info-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 10, 26, 0.45);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.info-modal {
+  width: 100%;
+  max-width: 400px;
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  padding: 18px 16px;
+  box-shadow: 0 8px 32px rgba(46, 36, 56, 0.25);
+}
+
+.info-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.info-modal-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--color-text);
+}
+
+.info-close {
+  border: none;
+  background: var(--color-primary-soft);
+  color: var(--color-text-secondary);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  transition: background 0.2s ease;
+}
+
+.info-close:hover {
+  background: #ddd5f0;
+}
+
+.info-modal-body {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
+.info-modal-footer {
+  margin: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
 .loading, .msg {
   text-align: center;
   color: var(--color-text-secondary);

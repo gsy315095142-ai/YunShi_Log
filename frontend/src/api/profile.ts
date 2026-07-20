@@ -10,6 +10,7 @@ export interface Profile {
   chinese_zodiac: string | null
   five_element: string | null
   nayin: string | null
+  day_master: string | null
   birth_time_display: string | null
 }
 

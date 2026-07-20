@@ -3,6 +3,26 @@ import { fetchProfile, saveProfile } from '../api/profile'
 import { ApiError } from '../api/client'
 import './ProfilePage.css'
 
+/** 三种五行算法的说明文案（点击格子 ⓘ 弹出） */
+const ELEMENT_INFO = {
+  tiangan: {
+    title: '天干五行',
+    body: '以出生农历年的「天干」对应五行：甲乙木、丙丁火、戊己土、庚辛金、壬癸水。只看年份，同一年出生的人结果都相同。',
+  },
+  nayin: {
+    title: '纳音五行',
+    body: '以出生年的「干支组合」对应纳音，六十甲子两两一组共三十种（如戊辰、己巳为「大林木」）。民间所说"某年出生是什么命"，通常指的就是纳音。',
+  },
+  rizhu: {
+    title: '日主五行',
+    body: '以出生「当天」的日柱天干对应五行（如甲子日出生为「甲木」）。八字命理以日主为"本命"核心：同年出生的人纳音相同，日主却因生日不同而各异。命理师说"你属甲木"，指的就是日主。',
+  },
+} as const
+
+/** 三种算法的对比总结，固定显示在弹窗底部 */
+const ELEMENT_INFO_FOOTER =
+  '三者都"对"，只是取的柱子不同：天干五行与纳音看「年柱」，日主看「日柱」。'
+
 export default function ProfilePage() {
   const [displayName, setDisplayName] = useState('')
   const [birthDate, setBirthDate] = useState('')
@@ -14,7 +34,9 @@ export default function ProfilePage() {
     chinese_zodiac: '',
     five_element: '',
     nayin: '',
+    day_master: '',
   })
+  const [infoTopic, setInfoTopic] = useState<keyof typeof ELEMENT_INFO | null>(null)
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(true)
 
@@ -31,6 +53,7 @@ export default function ProfilePage() {
           chinese_zodiac: p.chinese_zodiac || '-',
           five_element: p.five_element || '-',
           nayin: p.nayin || '-',
+          day_master: p.day_master || '-',
         })
       })
       .finally(() => setLoading(false))
@@ -52,6 +75,7 @@ export default function ProfilePage() {
         chinese_zodiac: saved.chinese_zodiac || '-',
         five_element: saved.five_element || '-',
         nayin: saved.nayin || '-',
+        day_master: saved.day_master || '-',
       })
       setMessage('已保存')
     } catch (err) {
@@ -97,12 +121,31 @@ export default function ProfilePage() {
             <strong className="fortune-value">{computed.chinese_zodiac}</strong>
           </div>
           <div className="fortune-tile">
-            <span className="fortune-label">天干五行</span>
+            <span className="fortune-label">
+              天干五行
+              <button type="button" className="info-btn" aria-label="天干五行说明" onClick={() => setInfoTopic('tiangan')}>
+                ⓘ
+              </button>
+            </span>
             <strong className="fortune-value element">{computed.five_element}</strong>
           </div>
           <div className="fortune-tile">
-            <span className="fortune-label">纳音五行</span>
+            <span className="fortune-label">
+              纳音五行
+              <button type="button" className="info-btn" aria-label="纳音五行说明" onClick={() => setInfoTopic('nayin')}>
+                ⓘ
+              </button>
+            </span>
             <strong className="fortune-value element">{computed.nayin}</strong>
+          </div>
+          <div className="fortune-tile">
+            <span className="fortune-label">
+              日主五行
+              <button type="button" className="info-btn" aria-label="日主五行说明" onClick={() => setInfoTopic('rizhu')}>
+                ⓘ
+              </button>
+            </span>
+            <strong className="fortune-value element">{computed.day_master}</strong>
           </div>
           <div className="fortune-tile">
             <span className="fortune-label">农历</span>
@@ -110,6 +153,21 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {infoTopic && (
+        <div className="info-backdrop" onClick={() => setInfoTopic(null)}>
+          <div className="info-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="info-modal-header">
+              <h4>{ELEMENT_INFO[infoTopic].title}</h4>
+              <button type="button" className="info-close" aria-label="关闭" onClick={() => setInfoTopic(null)}>
+                ✕
+              </button>
+            </div>
+            <p className="info-modal-body">{ELEMENT_INFO[infoTopic].body}</p>
+            <p className="info-modal-footer">{ELEMENT_INFO_FOOTER}</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
