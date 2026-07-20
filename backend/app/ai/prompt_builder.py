@@ -16,10 +16,13 @@ def build_chat_messages(
     day_context: str,
     search_result: str | None,
     history: list[dict] | None = None,
+    summary_context: str = "",
 ) -> list[dict]:
     messages: list[dict] = [{"role": "system", "content": SYSTEM_PROMPT}]
     if profile_context:
         messages.append({"role": "system", "content": profile_context})
+    if summary_context:
+        messages.append({"role": "system", "content": f"【历史对话摘要】\n{summary_context}"})
     if day_context:
         messages.append({"role": "system", "content": day_context})
     if search_result:

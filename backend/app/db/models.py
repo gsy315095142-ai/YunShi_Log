@@ -19,6 +19,9 @@ class User(Base):
     records: Mapped[list["DailyRecord"]] = relationship(back_populates="user")
     ai_settings: Mapped["AISettings | None"] = relationship(back_populates="user", uselist=False)
     chat_messages: Mapped[list["AIChatMessage"]] = relationship(back_populates="user")
+    chat_summary: Mapped["AIChatSummary | None"] = relationship(
+        back_populates="user", uselist=False
+    )
 
 
 class UserProfile(Base):
@@ -80,3 +83,19 @@ class AIChatMessage(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     user: Mapped["User"] = relationship(back_populates="chat_messages")
+
+
+class AIChatSummary(Base):
+    """每用户一份的对话滚动摘要：压缩最近窗口之外的旧消息。"""
+
+    __tablename__ = "ai_chat_summary"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True, index=True)
+    summary: Mapped[str] = mapped_column(Text, default="")
+    summarized_up_to_id: Mapped[int] = mapped_column(Integer, default=0)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now(), onupdate=func.now()
+    )
+
+    user: Mapped["User"] = relationship(back_populates="chat_summary")
