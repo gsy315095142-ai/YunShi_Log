@@ -26,3 +26,10 @@ export async function register(username: string, password: string) {
 export async function fetchMe() {
   return apiFetch<UserInfo>('/api/v1/auth/me')
 }
+
+export async function changePassword(username: string, old_password: string, new_password: string) {
+  return apiFetch<{ ok: boolean }>('/api/v1/auth/change-password', {
+    method: 'POST',
+    body: JSON.stringify({ username, old_password, new_password }),
+  })
+}

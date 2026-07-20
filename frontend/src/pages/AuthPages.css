@@ -208,6 +208,34 @@
   text-decoration: underline;
 }
 
+/* 登录/修改密码切换链接 */
+.link-btn-inline {
+  border: none;
+  background: none;
+  color: #7c3aed;
+  font-weight: 500;
+  font-size: 0.88rem;
+  padding: 0;
+  margin-left: 12px;
+  cursor: pointer;
+}
+
+.link-btn-inline:hover {
+  text-decoration: underline;
+}
+
+.hint .link-btn-inline:first-child {
+  margin-left: 0;
+}
+
+/* 成功提示（如密码已修改） */
+.notice {
+  color: #15803d;
+  margin: 0;
+  font-size: 0.88rem;
+  text-align: center;
+}
+
 .auth-footer {
   margin: 0;
   text-align: center;

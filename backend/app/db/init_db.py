@@ -2,7 +2,12 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.auth.security import hash_password
-from app.config import DEFAULT_ADMIN_PASSWORD, DEFAULT_ADMIN_USERNAME
+from app.config import (
+    DEFAULT_ADMIN_PASSWORD,
+    DEFAULT_ADMIN_USERNAME,
+    DEFAULT_USER_PASSWORD,
+    DEFAULT_USER_USERNAME,
+)
 from app.db.database import Base, SessionLocal, engine
 from app.db.models import User
 
@@ -30,15 +35,16 @@ def _apply_column_migrations() -> None:
 
 
 def seed_default_admin(db: Session) -> None:
-    existing = db.query(User).filter(User.username == DEFAULT_ADMIN_USERNAME).first()
-    if existing:
-        return
-    admin = User(
-        username=DEFAULT_ADMIN_USERNAME,
-        password_hash=hash_password(DEFAULT_ADMIN_PASSWORD),
-        role="admin",
-    )
-    db.add(admin)
+    """按需补齐默认账号：已存在的跳过，新库/老库都能补。"""
+    defaults = [
+        (DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_PASSWORD, "admin"),
+        (DEFAULT_USER_USERNAME, DEFAULT_USER_PASSWORD, "user"),
+    ]
+    for username, password, role in defaults:
+        existing = db.query(User).filter(User.username == username).first()
+        if existing:
+            continue
+        db.add(User(username=username, password_hash=hash_password(password), role=role))
     db.commit()
 
 
