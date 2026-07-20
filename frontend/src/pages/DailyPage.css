@@ -310,6 +310,109 @@
   color: #fff;
 }
 
+/* —— 条目内联编辑 —— */
+.inline-editor {
+  flex: 1;
+}
+
+.inline-editor textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  padding: 8px 10px;
+  font-size: 0.95rem;
+  resize: vertical;
+  margin-bottom: 8px;
+}
+
+.inline-editor-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.inline-editor-actions .submit-btn {
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 8px 18px;
+  min-height: 36px;
+  border-radius: 8px;
+}
+
+.inline-editor-actions .cancel-btn,
+.confirm-actions .cancel-btn {
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  padding: 8px 18px;
+  min-height: 36px;
+  border-radius: 8px;
+}
+
+/* —— 删除确认弹窗 —— */
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 10, 26, 0.5);
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.confirm-modal {
+  width: 100%;
+  max-width: 360px;
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  padding: 18px 16px;
+  box-shadow: 0 8px 32px rgba(46, 36, 56, 0.25);
+}
+
+.confirm-modal h4 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  color: var(--color-text);
+}
+
+.confirm-content {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  background: var(--color-surface-soft);
+  border-radius: 8px;
+  padding: 10px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.confirm-tip {
+  margin: 0 0 14px;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.confirm-actions .danger-btn {
+  border: none;
+  background: var(--color-danger);
+  color: #fff;
+  padding: 8px 18px;
+  min-height: 36px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
 /* —— 编辑器 —— */
 .sheet-editor {
   border-top: 1px solid var(--color-border);

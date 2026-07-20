@@ -62,13 +62,8 @@ export default function DailyPage() {
     if (!selectedDate || !editorText.trim()) return
     setMessage('')
     try {
-      if (editingId) {
-        await updateRecord(editingId, editorText.trim())
-      } else {
-        await createRecord(selectedDate, editorText.trim())
-      }
+      await createRecord(selectedDate, editorText.trim())
       setEditorText('')
-      setEditingId(null)
       loadMonth()
       loadToday()
       setMessage('已保存')
@@ -79,21 +74,29 @@ export default function DailyPage() {
 
   const startEdit = (item: RecordItem) => {
     setEditingId(item.id)
-    setEditorText(item.content)
     setConfirmingDeleteId(null)
     setMessage('')
   }
 
   const cancelEdit = () => {
     setEditingId(null)
-    setEditorText('')
+  }
+
+  const updateRecordItem = async (id: number, content: string) => {
+    if (!content.trim()) return
+    setMessage('')
+    try {
+      await updateRecord(id, content.trim())
+      setEditingId(null)
+      loadMonth()
+      loadToday()
+      setMessage('已保存')
+    } catch (err) {
+      setMessage(err instanceof ApiError ? err.message : '保存失败')
+    }
   }
 
   const removeRecord = async (id: number) => {
-    if (confirmingDeleteId !== id) {
-      setConfirmingDeleteId(id)
-      return
-    }
     await deleteRecord(id)
     setConfirmingDeleteId(null)
     if (editingId === id) cancelEdit()
@@ -128,6 +131,9 @@ export default function DailyPage() {
           onSubmit={submitRecord}
           onStartEdit={startEdit}
           onCancelEdit={cancelEdit}
+          onUpdate={updateRecordItem}
+          onRequestDelete={setConfirmingDeleteId}
+          onCancelDelete={() => setConfirmingDeleteId(null)}
           onRemove={removeRecord}
         />
       )}
