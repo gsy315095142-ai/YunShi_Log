@@ -4,18 +4,20 @@
 
 ## 当前状态
 
-- Phase 1～4 已完成（后端 API + SQLite + 前端 SPA），Phase 5 部署文档就绪、待服务器执行
+- Phase 1～5 已完成，**已上线**：`http://www.lumiclaw.top/sylog/`（阿里云 + 宝塔，HTTP 阶段）
 - 当前版本 v0.1.26072001（登录页可查看版本更新说明）
 - 需求与设计见 [`docs/PROJECT_DESIGN.md`](docs/PROJECT_DESIGN.md)
+- 首次部署见 [`docs/DEPLOY_BAOTA.md`](docs/DEPLOY_BAOTA.md)；日常更新（发版/回滚）见 [`docs/UPDATE_RUNBOOK.md`](docs/UPDATE_RUNBOOK.md)
 
 ## 功能一览
 
-- **个人信息**：姓名、公历生日、出生时间（可选）、MBTI；自动推算农历、星座、生肖、天干五行、纳音五行、日主五行（三种五行各配 ⓘ 说明弹窗）
-- **每日记录**：月历视图，同日多条记录，底部弹层增删改
-- **AI 测算**：「测算大师」聊天式解读，支持 DeepSeek / 智谱
+- **个人信息**：姓名、公历生日、出生时间（可选）、MBTI（16 型下拉选择）；自动推算农历、星座、生肖、天干五行、纳音五行、日主五行（三种五行各配 ⓘ 说明弹窗）
+- **每日记录**：月历视图，同日单条记录；今日卡片直接写/改/删，历史日期走底部弹层；「测算今日运势」一键跳 AI 页预填
+- **AI 测算**：「测算大师」聊天式解读，支持 DeepSeek / 智谱（弹窗式配置）
   - 自动读取个人命理档案（以日主五行为本命核心）
   - 双层对话记忆：最近 20 条原文 + 更早对话滚动压缩为摘要
   - 思考模式默认开启，思考内容独立框展示
+  - **工具调用**：用户明确指示时可直接写入/修改每日记录（只开放写、不开放删），聊天气泡显示操作回执
   - 输入 @ 关联某日记录；SearXNG 联网搜索辅助分析
 
 ## 本地启动
@@ -81,9 +83,17 @@ frontend/src/
   hooks/      useMonthRecords、useAIChat
 ```
 
-## 待完成
+## 线上部署（已完成）
 
-- 阿里云实际上线部署（步骤见 [`docs/DEPLOY_BAOTA.md`](docs/DEPLOY_BAOTA.md)）
+- 地址：`http://www.lumiclaw.top/sylog/`
+- 架构：nginx 托管前端静态文件（`/sylog/`）+ 反代 API（`/api/` → `127.0.0.1:8000`）；后端由 Supervisor 常驻守护；数据库 SQLite 自动建表迁移
+- 代码管理：服务器通过 git 克隆本仓库（GitHub Deploy Keys），更新只需 `git pull` + 重启
+- 详细流程：[`docs/DEPLOY_BAOTA.md`](docs/DEPLOY_BAOTA.md)；日常更新：[`docs/UPDATE_RUNBOOK.md`](docs/UPDATE_RUNBOOK.md)
+
+## 待完成（未来规划）
+
+- HTTPS 证书（语音输入的前置条件，浏览器只对安全上下文开放麦克风）
+- 语音输入（阿里服务器已有 ASR 服务，待 HTTPS 后接入）
 
 ## 联网搜索（SearXNG）
 

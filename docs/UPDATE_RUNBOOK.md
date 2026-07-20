@@ -21,6 +21,11 @@ git pull
 
 重启仅需 1~3 秒，期间请求会短暂失败，属正常现象。
 
+> - `.env`（密钥配置）不在 git 里，`git pull` 不会动它，无需重复配置。
+> - 后端由 Supervisor 以 **root** 运行，代码也是 root 克隆的，属主一致；
+>   **不要**以其他用户执行 git 操作后又直接重启，避免文件属主混杂导致 SQLite 只读
+>   （症状：页面能开、写入报"请求失败"）。
+
 ### 依赖有变化时（requirements.txt 改了才需要）
 
 ```bash
@@ -70,6 +75,7 @@ git checkout <commit号>          # 切回旧代码
 ```bash
 curl -s http://127.0.0.1:8000/health          # {"status":"ok"} 即后端正常
 supervisorctl status su-yunshi-log            # RUNNING 即进程正常
+supervisorctl tail su-yunshi-log stderr       # 出问题时看后端真实报错
 ```
 
 浏览器打开 `http://www.lumiclaw.top/sylog/` 能登录即全链路正常。

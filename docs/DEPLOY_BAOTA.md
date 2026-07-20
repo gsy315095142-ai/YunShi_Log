@@ -1,6 +1,7 @@
 # 宝塔部署指南 — lumiclaw.top /sylog/
 
-> 适用环境：宝塔面板、HTTP（无 SSL）、本机打包上传前端  
+> ✅ 部署已于 2026-07-20 完成，本文档按**实际执行过程**记录，可用于重装/迁移/新机器复刻。
+> 日常迭代更新请看 [`UPDATE_RUNBOOK.md`](UPDATE_RUNBOOK.md)。
 > 访问地址：`http://www.lumiclaw.top/sylog/`（首页不链接，知道地址才能进入）
 
 ---
@@ -10,7 +11,7 @@
 ```
 浏览器
   → http://www.lumiclaw.top/sylog/*     静态前端（dist 上传到网站目录/sylog/）
-  → http://www.lumiclaw.top/api/v1/*    nginx 反代 → 127.0.0.1:8000 后端
+  → http://www.lumiclaw.top/api/v1/*    nginx 反代 → 127.0.0.1:8000 后端（Supervisor 守护）
   → 127.0.0.1:8888                      SearXNG（同机，已对接）
 ```
 
@@ -18,231 +19,142 @@
 |------|------|
 | 网站根目录 | `/www/wwwroot/lumiclaw.top` |
 | 前端目录 | `/www/wwwroot/lumiclaw.top/sylog/` |
-| 后端目录（建议） | `/www/server/su-yunshi-log/`（放在网站根外更安全） |
-| 数据库 | `/www/server/su-yunshi-log/data/app.db` |
+| 代码目录 | `/www/server/su-yunshi-log/`（git 克隆，**root** 操作） |
+| 数据库 | `/www/server/su-yunshi-log/data/app.db`（首次启动自动创建） |
+| 后端进程 | Supervisor 程序 `su-yunshi-log`，启动命令 `bash backend/run-prod.sh` |
+| Python | `/usr/bin/python3.11`（dnf 安装，与系统 3.6 共存）；venv 在 `backend/.venv/` |
 
 ---
 
-## 第 0 步：升级 Python（必做）
+## 第 0 步：Python 环境
 
-系统自带 **Python 3.6.8 无法运行本项目**，需要 **Python 3.10 或 3.11**。
-
-### 方法 A：宝塔 Python 项目管理器（推荐）
-
-1. 宝塔 → **软件商店** → 搜索 **Python项目管理器** → 安装  
-2. 打开项目管理器 → **版本管理** → 安装 **3.10** 或 **3.11**  
-3. 安装完成后，SSH 验证（路径以宝塔实际为准）：
+系统自带 **Python 3.6.8 无法运行本项目**，服务器上已通过 dnf 安装 **Python 3.11**：
 
 ```bash
-/www/server/pyporject_evn/versions/3.11.*/bin/python3.11 --version
+/usr/bin/python3.11 --version   # Python 3.11.x
 ```
 
-### 方法 B：SSH 查看系统后安装
+若新机器没有：`sudo dnf install -y python3.11 python3.11-pip`（Alibaba Cloud Linux 3 / CentOS Stream 8+）；
+CentOS 7 需源码编译，参见 git 历史版本文档。
 
-先确认系统：
+## 第 1 步：服务器 git 拉取代码（一次性配置）
 
 ```bash
-cat /etc/os-release
+# 生成服务器自己的密钥（三个提示全部回车）
+ssh-keygen -t ed25519 -C "aliyun-yunshi-log-root"
+cat ~/.ssh/id_ed25519.pub
 ```
 
-#### Alibaba Cloud Linux 3 / CentOS Stream 8+
+把公钥添加到 GitHub 仓库 **Settings → Deploy keys**（只读即可，可挂多把）。
+⚠️ 注意操作用户：宝塔终端是 **root**，阿里云控制台终端是 **admin**，密钥各归各的用户，别混。
 
 ```bash
-sudo dnf install -y python3.11 python3.11-pip
-python3.11 --version
+ssh -T git@github.com        # 看到 Hi ...! 即成功
+mkdir -p /www/server
+cd /www/server
+git clone git@github.com:gsy315095142-ai/YunShi_Log.git su-yunshi-log
 ```
 
-#### CentOS 7 / Alibaba Cloud Linux 2（常见 3.6 环境）
-
-```bash
-sudo yum install -y gcc openssl-devel bzip2-devel libffi-devel zlib-devel wget make
-cd /tmp
-wget https://www.python.org/ftp/python/3.11.9/Python-3.11.9.tgz
-tar -xf Python-3.11.9.tgz
-cd Python-3.11.9
-./configure --enable-optimizations --prefix=/usr/local/python311
-make -j$(nproc)
-sudo make altinstall
-/usr/local/python311/bin/python3.11 --version
-```
-
-成功后用 **`python3.11`** 创建虚拟环境，不要用系统 `python3`。
-
----
-
-## 第 1 步：本机打包前端
-
-在 Windows 项目根目录：
-
-```bat
-build-frontend.bat
-```
-
-或：
-
-```bat
-cd frontend
-npm install
-npm run build
-```
-
-将 `frontend/dist/` **里面的所有文件**（不是 dist 文件夹本身）上传到服务器：
-
-```
-/www/wwwroot/lumiclaw.top/sylog/
-```
-
-上传后应有：
-
-```
-/www/wwwroot/lumiclaw.top/sylog/index.html
-/www/wwwroot/lumiclaw.top/sylog/assets/...
-```
-
----
-
-## 第 2 步：上传后端
-
-将以下内容打包上传到 `/www/server/su-yunshi-log/`：
-
-```
-backend/
-  app/
-  requirements.txt
-  run-prod.sh
-```
-
-**不要上传**：`backend/.venv/`、`__pycache__/`、`data/app.db`（服务器上自动生成）
-
-### 在服务器创建虚拟环境并安装依赖
-
-SSH 登录后（把 `python3.11` 换成你实际的 3.10+ 路径）：
+## 第 2 步：虚拟环境与依赖
 
 ```bash
 cd /www/server/su-yunshi-log/backend
-python3.11 -m venv .venv
+/usr/bin/python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 python -c "from app.main import app; print('backend ok')"
 deactivate
 ```
 
----
-
-## 第 3 步：配置环境变量
-
-在 `/www/server/su-yunshi-log/backend/` 创建 `.env`（或写在宝塔 Python 项目环境变量里）：
+## 第 3 步：环境变量 `.env`
 
 ```bash
-JWT_SECRET=请换成一长串随机字符
-APP_SECRET=同上或另设一串
-CORS_ORIGINS=http://www.lumiclaw.top,http://lumiclaw.top
-SEARXNG_BASE_URL=http://127.0.0.1:8888
-SEARXNG_ENABLED=true
+printf 'JWT_SECRET=%s\nAPP_SECRET=%s\nCORS_ORIGINS=http://www.lumiclaw.top,http://lumiclaw.top\nSEARXNG_BASE_URL=http://127.0.0.1:8888\nSEARXNG_ENABLED=true\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > /www/server/su-yunshi-log/backend/.env
 ```
 
-> 勿将 `.env` 提交到 Git。生产环境务必改掉默认管理员密码。
+`run-prod.sh` 启动时自动加载该文件。`.env` 不入 git，`git pull` 永远不会覆盖它。
 
-若用文件方式，需在启动前 `export $(cat .env | xargs)` 或由宝塔面板填写。
+## 第 4 步：Supervisor 守护后端
 
----
+宝塔 → 软件商店 → 安装 **Supervisor管理器** → 添加守护进程：
 
-## 第 4 步：宝塔运行后端
+| 字段 | 值 |
+|------|-----|
+| 名称 | `su-yunshi-log` |
+| 启动用户 | `root`（见下方权限坑） |
+| 运行目录 | `/www/server/su-yunshi-log/backend` |
+| 启动命令 | `bash /www/server/su-yunshi-log/backend/run-prod.sh` |
+| 进程数量 | 1 |
 
-### 方式 A：Python 项目管理器
+> ⚠️ **权限坑（实际踩过）**：代码是 root 克隆的，若启动用户填 `www`，进程对 `data/` 目录无写权限——
+> 症状是"页面能打开、但新增记录报请求失败"（SQLite 只读）。要么启动用户=root，要么 `chown -R www:www /www/server/su-yunshi-log`。
 
-1. **添加项目**  
-   - 项目路径：`/www/server/su-yunshi-log/backend`  
-   - Python 版本：3.10 / 3.11  
-   - 启动方式：`uvicorn`  
-   - 启动命令：`app.main:app`  
-   - 绑定：`127.0.0.1:8000`  
+## 第 5 步：nginx 配置（已配置，无需改动）
 
-2. 在项目中安装依赖（界面一般有「模块」或手动 `pip install -r requirements.txt`）
-
-3. 环境变量填入第 3 步内容
-
-### 方式 B：Supervisor（宝塔 → 软件商店 → Supervisor）
-
-```ini
-[program:su-yunshi-log]
-directory=/www/server/su-yunshi-log/backend
-command=/www/server/su-yunshi-log/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
-autostart=true
-autorestart=true
-user=www
-environment=JWT_SECRET="你的密钥",CORS_ORIGINS="http://www.lumiclaw.top,http://lumiclaw.top"
-```
-
----
-
-## 第 5 步：配置 nginx（宝塔网站设置）
-
-网站 **lumiclaw.top** → **设置** → **配置文件**，在 `server { ... }` 内增加：
+网站 **lumiclaw.top** → 设置 → 配置文件，`server {}` 内已有：
 
 ```nginx
-# 运势 Log 前端（SPA）
 location /sylog/ {
     root /www/wwwroot/lumiclaw.top;
     try_files $uri $uri/ /sylog/index.html;
 }
-
-# 无尾斜杠时跳转
 location = /sylog {
     return 301 /sylog/;
 }
-
-# 后端 API 反代
 location /api/ {
     proxy_pass http://127.0.0.1:8000;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
 }
 ```
 
-保存后 **重载 nginx**。
+将来上 HTTPS 时建议补 `proxy_set_header X-Forwarded-Proto $scheme;`。
 
----
+## 第 6 步：前端上传
 
-## 第 6 步：自检
+本机执行 `build-frontend.bat` 打 zip，或直接压缩 `frontend/dist/` 内容；
+宝塔 **文件** → 进入 `/www/wwwroot/lumiclaw.top/sylog/` → 清空旧文件 → 上传 zip → 解压到当前目录；
+确认 `sylog/index.html` 与 `sylog/assets/` 就位。
+
+## 第 7 步：自检
 
 | 检查项 | 命令或地址 |
 |--------|------------|
 | 后端健康 | SSH：`curl -s http://127.0.0.1:8000/health` → `{"status":"ok"}` |
-| API 反代 | 浏览器或 curl：`http://www.lumiclaw.top/api/v1/ai/providers` |
+| 进程 | `supervisorctl status su-yunshi-log` → RUNNING |
+| API 反代 | `http://www.lumiclaw.top/api/v1/ai/providers` |
 | 前端 | `http://www.lumiclaw.top/sylog/` → 登录页 |
-| 登录 | `Guosy` / `1234567890`（部署后建议改密） |
-| SearXNG | SSH：`curl -s "http://127.0.0.1:8888/search?q=test&format=json" \| head -c 200` |
+| 登录 | `Guosy` / `1234567890`（**部署后尽快改密**） |
 
 ---
 
 ## 常见问题
 
+### 页面能开，新增记录报"请求失败"
+
+运行用户与文件属主不一致（见第 4 步权限坑）。查 `ps aux \| grep uvicorn` 看运行用户，
+`supervisorctl tail su-yunshi-log stderr` 看真实报错。
+
 ### 打开 /sylog/ 空白或 404
 
-- 确认 `index.html` 在 `/www/wwwroot/lumiclaw.top/sylog/` 下  
-- 确认 nginx 已加 `location /sylog/` 并重载  
+确认 `index.html` 在 `/www/wwwroot/lumiclaw.top/sylog/` 下，且 nginx `location /sylog/` 存在。
 
 ### 登录提示网络错误
 
-- 后端是否运行：`curl http://127.0.0.1:8000/health`  
-- nginx 是否配置 `location /api/`  
-- `CORS_ORIGINS` 是否包含 `http://www.lumiclaw.top`  
+后端是否运行（`curl 127.0.0.1:8000/health`）；nginx 是否有 `location /api/`。
 
 ### AI 测算没有联网信息
 
-- 后端与 SearXNG 须在同一台机  
-- `SEARXNG_BASE_URL=http://127.0.0.1:8888`  
+后端与 SearXNG 须同机，`SEARXNG_BASE_URL=http://127.0.0.1:8888`。
 
-### pip 安装失败
+### 遗留备份目录
 
-- 确认用的是 **3.10+** 的 venv，不是系统 `python3`（3.6）  
+首次部署前的旧文件备份在 `/www/server/su-yunshi-log.bak`，验证无误后可删除。
 
 ---
 
 ## 访问地址（备忘）
 
-- 项目入口：`http://www.lumiclaw.top/sylog/`  
+- 项目入口：`http://www.lumiclaw.top/sylog/`
 - 现有首页：`http://www.lumiclaw.top/index.html`（无需修改、无需加链接）

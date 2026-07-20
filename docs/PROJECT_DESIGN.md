@@ -2,7 +2,7 @@
 
 > 文档版本：v0.3  
 > 最后更新：2026-07-20  
-> 状态：Phase 1～4 已完成，Phase 5 部署待执行
+> 状态：Phase 1～5 已完成，已上线 `http://www.lumiclaw.top/sylog/`（部署见 `DEPLOY_BAOTA.md`，更新见 `UPDATE_RUNBOOK.md`）
 
 本文档汇总需求结论与技术设计，供后续开发及新对话快速查阅。
 
@@ -567,8 +567,8 @@ users 1 ── * ai_chat_messages
 ### Phase 5 — 增强与部署
 
 - [x] 对接阿里云联网搜索（SearXNG，同机 127.0.0.1:8888）
-- [x] 生产构建与部署文档（`docs/DEPLOY_BAOTA.md`，待服务器执行）
-- [ ] 阿里云实际上线部署
+- [x] 生产构建与部署文档（`docs/DEPLOY_BAOTA.md`）
+- [x] 阿里云实际上线部署（2026-07-20：git 克隆 + Supervisor 守护 + nginx 反代 + 前端 dist 上传）
 - [ ] 管理员权限扩展（若需要）
 
 ---
@@ -602,6 +602,7 @@ users 1 ── * ai_chat_messages
 | 2026-07-20 | 每日记录：改为同日**单条**记录（原多条）；删除改弹窗确认、编辑改条目内联；新增今日卡片；日历格子正方形化 |
 | 2026-07-20 | 今日卡片升级为自治记录卡：直接书写/内联编辑/删除确认，无需打开弹层；新增「测算今日运势」入口（跳转 AI 页预填提问与日期）；MBTI 改下拉选择（ENTP 置顶） |
 | 2026-07-20 | AI 工具调用：测算大师可在用户明确指示时写入/修改每日记录（Function Calling，两段式执行）；仅开放写不开放删；聊天内显示操作回执；注入当前日期上下文 |
+| 2026-07-20 | **阿里云上线**：git 克隆部署（Deploy Keys）+ venv（/usr/bin/python3.11）+ Supervisor 守护 + nginx 反代 + 前端 dist 上传；`run-prod.sh` 自动加载 .env 并使用 venv uvicorn；踩坑记录：root/admin 双用户密钥、运行用户与文件属主需一致 |
 
 ---
 
