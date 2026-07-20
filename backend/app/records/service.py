@@ -79,6 +79,7 @@ def get_today_info(db: Session, user: User) -> TodayInfoResponse:
         date=today,
         lunar=format_lunar(today, None),
         count=len(items),
+        id=items[0].id if items else None,
         content=items[0].content if items else None,
     )
 

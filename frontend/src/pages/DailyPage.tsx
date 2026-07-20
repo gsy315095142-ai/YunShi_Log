@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   createRecord,
   deleteRecord,
@@ -15,6 +16,7 @@ import TodayCard from '../components/TodayCard'
 import './DailyPage.css'
 
 export default function DailyPage() {
+  const navigate = useNavigate()
   const { year, month, days, recordsByDate, loading, loadMonth, shiftMonth } = useMonthRecords()
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [editorText, setEditorText] = useState('')
@@ -104,6 +106,47 @@ export default function DailyPage() {
     loadToday()
   }
 
+  // —— 今日卡片：自治 CRUD，返回 null 表示成功，否则为错误提示 ——
+  const createToday = async (text: string): Promise<string | null> => {
+    if (!todayInfo) return '加载中，请稍后再试'
+    try {
+      await createRecord(todayInfo.date, text)
+      loadMonth()
+      loadToday()
+      return null
+    } catch (err) {
+      return err instanceof ApiError ? err.message : '保存失败'
+    }
+  }
+
+  const updateToday = async (id: number, text: string): Promise<string | null> => {
+    try {
+      await updateRecord(id, text)
+      loadMonth()
+      loadToday()
+      return null
+    } catch (err) {
+      return err instanceof ApiError ? err.message : '保存失败'
+    }
+  }
+
+  const deleteToday = async (id: number) => {
+    await deleteRecord(id)
+    loadMonth()
+    loadToday()
+  }
+
+  // 跳转 AI 测算页，预填今日日期与提问，用户只需点发送
+  const goFortune = () => {
+    if (!todayInfo) return
+    navigate('/ai', {
+      state: {
+        prefill: `今天是 ${todayInfo.date}（农历 ${todayInfo.lunar}），请帮我测算今日运势`,
+        linkedDate: todayInfo.date,
+      },
+    })
+  }
+
   return (
     <div className="daily-page">
       <CalendarGrid
@@ -116,7 +159,13 @@ export default function DailyPage() {
         onOpenDay={openDay}
       />
 
-      <TodayCard info={todayInfo} onOpen={openDay} />
+      <TodayCard
+        info={todayInfo}
+        onCreate={createToday}
+        onUpdate={updateToday}
+        onDelete={deleteToday}
+        onFortune={goFortune}
+      />
 
       {selectedDate && (
         <DaySheet

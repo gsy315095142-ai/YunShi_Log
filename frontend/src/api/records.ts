@@ -24,6 +24,7 @@ export interface TodayInfo {
   date: string
   lunar: string
   count: number
+  id: number | null
   content: string | null
 }
 

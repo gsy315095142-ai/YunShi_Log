@@ -23,6 +23,13 @@ const ELEMENT_INFO = {
 const ELEMENT_INFO_FOOTER =
   '三者都"对"，只是取的柱子不同：天干五行与纳音看「年柱」，日主看「日柱」。'
 
+/** MBTI 16 型，ENTP 置顶，其余按字母序 */
+const MBTI_OPTIONS = [
+  'ENTP',
+  'ENFJ', 'ENFP', 'ENTJ', 'ESFJ', 'ESFP', 'ESTJ', 'ESTP',
+  'INFJ', 'INFP', 'INTJ', 'INTP', 'ISFJ', 'ISFP', 'ISTJ', 'ISTP',
+]
+
 export default function ProfilePage() {
   const [displayName, setDisplayName] = useState('')
   const [birthDate, setBirthDate] = useState('')
@@ -103,7 +110,16 @@ export default function ProfilePage() {
         </label>
         <label>
           MBTI（可选）
-          <input value={mbti} onChange={(e) => setMbti(e.target.value)} placeholder="如 INTJ" />
+          <select value={mbti} onChange={(e) => setMbti(e.target.value)}>
+            <option value="">未选择</option>
+            {MBTI_OPTIONS.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+            {/* 兼容历史手填的非标准值，避免显示丢失 */}
+            {mbti && !MBTI_OPTIONS.includes(mbti) && <option value={mbti}>{mbti}</option>}
+          </select>
         </label>
         <button type="submit">保存</button>
         {message && <p className="msg">{message}</p>}

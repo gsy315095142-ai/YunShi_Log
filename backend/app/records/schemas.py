@@ -38,4 +38,5 @@ class TodayInfoResponse(BaseModel):
     date: date
     lunar: str
     count: int
+    id: int | None
     content: str | None

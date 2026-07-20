@@ -14,11 +14,14 @@
   color: var(--color-text-label);
 }
 
-.profile-page form.card input {
+.profile-page form.card input,
+.profile-page form.card select {
   padding: 10px 12px;
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-control);
   font-size: 1rem;
+  background: var(--color-surface);
+  color: var(--color-text);
 }
 
 .profile-page form.card button {

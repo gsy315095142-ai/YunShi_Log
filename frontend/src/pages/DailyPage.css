@@ -469,14 +469,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  cursor: pointer;
   border: 1px solid var(--color-border);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.today-card:hover {
-  border-color: #c8b8e8;
-  box-shadow: 0 4px 16px rgba(46, 36, 56, 0.1);
 }
 
 .today-header {
@@ -507,6 +500,16 @@
   margin-left: auto;
 }
 
+/* 卡片头部右侧的编辑/删除图标，比列表里的更紧凑 */
+.today-actions {
+  gap: 0;
+}
+
+.today-actions .icon-btn {
+  width: 30px;
+  height: 30px;
+}
+
 .today-body {
   border-top: 1px solid var(--color-border);
   padding-top: 10px;
@@ -531,13 +534,69 @@
   color: var(--color-text-secondary);
 }
 
-.today-footer {
+/* —— 卡片内编辑器（新增/编辑共用） —— */
+.today-editor textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  padding: 10px;
+  font-size: 0.95rem;
+  resize: vertical;
+  margin-bottom: 8px;
+}
+
+.today-editor-actions {
   display: flex;
+  gap: 8px;
   justify-content: flex-end;
 }
 
-.today-cta {
+.today-editor-actions .submit-btn {
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 8px 18px;
+  min-height: 36px;
+  border-radius: 8px;
+}
+
+.today-editor-actions .submit-btn:disabled {
+  opacity: 0.5;
+}
+
+.today-editor-actions .cancel-btn {
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  padding: 8px 18px;
+  min-height: 36px;
+  border-radius: 8px;
+}
+
+.today-error {
+  margin: 6px 0 0;
   font-size: 0.8rem;
-  font-weight: 600;
+  color: var(--color-danger);
+}
+
+/* —— 测算今日运势入口 —— */
+.today-fortune-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px;
+  border: 1px dashed var(--color-primary-light);
+  border-radius: var(--radius-control);
+  background: var(--color-primary-faint);
   color: var(--color-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.today-fortune-btn:hover {
+  background: #ece4fb;
 }

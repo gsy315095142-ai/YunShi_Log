@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { fetchMonthRecords } from '../api/records'
 import { useAIChat } from '../hooks/useAIChat'
 import AISettingsCard from '../components/AISettingsCard'
@@ -7,6 +8,8 @@ import DatePickerPopover from '../components/DatePickerPopover'
 import './AIPage.css'
 
 export default function AIPage() {
+  const location = useLocation()
+  const navigate = useNavigate()
   const [linkedDate, setLinkedDate] = useState('')
   const [dateOptions, setDateOptions] = useState<string[]>([])
   const [showDatePicker, setShowDatePicker] = useState(false)
@@ -19,6 +22,17 @@ export default function AIPage() {
       const dates = Object.keys(data.records_by_date).sort()
       setDateOptions(dates)
     })
+  }, [])
+
+  // 从「测算今日运势」入口跳入时，预填提问与关联日期，用户只需点发送
+  useEffect(() => {
+    const state = location.state as { prefill?: string; linkedDate?: string } | null
+    if (state?.prefill) {
+      setInput(state.prefill)
+      if (state.linkedDate) setLinkedDate(state.linkedDate)
+      navigate(location.pathname, { replace: true, state: null })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
