@@ -67,6 +67,8 @@
   flex-direction: column;
   align-items: stretch;
   gap: 2px;
+  height: 60px; /* 固定高度：有无记录格子一样大，日历不变形 */
+  overflow: hidden;
   padding: 4px 5px;
   text-align: left;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease, border-color 0.2s ease;

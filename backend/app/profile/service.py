@@ -23,6 +23,7 @@ def _build_response(profile: UserProfile | None) -> ProfileResponse:
             zodiac_sign=fortune.zodiac_sign,
             chinese_zodiac=fortune.chinese_zodiac,
             five_element=fortune.five_element,
+            nayin=fortune.nayin,
             birth_time_display=fortune.birth_time_display,
         )
 
@@ -36,6 +37,7 @@ def _build_response(profile: UserProfile | None) -> ProfileResponse:
         zodiac_sign=fortune.zodiac_sign,
         chinese_zodiac=fortune.chinese_zodiac,
         five_element=fortune.five_element,
+        nayin=fortune.nayin,
         birth_time_display=fortune.birth_time_display,
     )
 

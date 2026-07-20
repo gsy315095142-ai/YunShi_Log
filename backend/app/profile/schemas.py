@@ -19,4 +19,5 @@ class ProfileResponse(BaseModel):
     zodiac_sign: str | None
     chinese_zodiac: str | None
     five_element: str | None
+    nayin: str | None
     birth_time_display: str | None

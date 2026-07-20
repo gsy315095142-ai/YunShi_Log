@@ -1,7 +1,7 @@
 .app-shell {
   max-width: 480px;
   margin: 0 auto;
-  min-height: 100dvh;
+  height: 100dvh; /* 固定视口高度：main 内部滚动，页面内容才可按 100% 撑满 */
   display: flex;
   flex-direction: column;
   background: var(--color-bg);
@@ -61,9 +61,16 @@
 
 .app-main {
   flex: 1;
+  min-height: 0;
   overflow: auto;
   padding: 16px;
   padding-bottom: 88px;
+}
+
+/* AI 测算页：聊天卡片撑满整屏，输入框固定于底部 Tab 上方，外层不滚动 */
+.app-main:has(.ai-page) {
+  overflow: hidden;
+  padding-bottom: calc(68px + env(safe-area-inset-bottom));
 }
 
 .tab-bar {

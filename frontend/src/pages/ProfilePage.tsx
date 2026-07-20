@@ -13,6 +13,7 @@ export default function ProfilePage() {
     zodiac_sign: '',
     chinese_zodiac: '',
     five_element: '',
+    nayin: '',
   })
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(true)
@@ -29,6 +30,7 @@ export default function ProfilePage() {
           zodiac_sign: p.zodiac_sign || '-',
           chinese_zodiac: p.chinese_zodiac || '-',
           five_element: p.five_element || '-',
+          nayin: p.nayin || '-',
         })
       })
       .finally(() => setLoading(false))
@@ -49,6 +51,7 @@ export default function ProfilePage() {
         zodiac_sign: saved.zodiac_sign || '-',
         chinese_zodiac: saved.chinese_zodiac || '-',
         five_element: saved.five_element || '-',
+        nayin: saved.nayin || '-',
       })
       setMessage('已保存')
     } catch (err) {
@@ -94,8 +97,12 @@ export default function ProfilePage() {
             <strong className="fortune-value">{computed.chinese_zodiac}</strong>
           </div>
           <div className="fortune-tile">
-            <span className="fortune-label">五行</span>
+            <span className="fortune-label">天干五行</span>
             <strong className="fortune-value element">{computed.five_element}</strong>
+          </div>
+          <div className="fortune-tile">
+            <span className="fortune-label">纳音五行</span>
+            <strong className="fortune-value element">{computed.nayin}</strong>
           </div>
           <div className="fortune-tile">
             <span className="fortune-label">农历</span>

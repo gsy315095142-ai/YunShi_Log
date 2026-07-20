@@ -16,6 +16,16 @@ STEM_ELEMENT = {
     "壬": "水", "癸": "水",
 }
 
+# 纳音五行：六十甲子两两一组，共 30 组，按六十甲子序号 // 2 索引
+NAYIN = [
+    "海中金", "炉中火", "大林木", "路旁土", "剑锋金",
+    "山头火", "涧下水", "城头土", "白蜡金", "杨柳木",
+    "泉中水", "屋上土", "霹雳火", "松柏木", "长流水",
+    "沙中金", "山下火", "平地木", "壁上土", "金箔金",
+    "覆灯火", "天河水", "大驿土", "钗钏金", "桑柘木",
+    "大溪水", "沙中土", "天上火", "石榴木", "大海水",
+]
+
 ZODIAC_RANGES = [
     ((1, 20), (2, 18), "水瓶座"),
     ((2, 19), (3, 20), "双鱼座"),
@@ -38,6 +48,7 @@ class FortuneResult:
     zodiac_sign: str | None
     chinese_zodiac: str | None
     five_element: str | None
+    nayin: str | None
     birth_time_display: str | None
 
 
@@ -70,6 +81,12 @@ def calc_chinese_zodiac(lunar_year: int) -> str:
 def calc_five_element(lunar_year: int) -> str:
     stem, _ = _lunar_year_pillar(lunar_year)
     return STEM_ELEMENT[stem]
+
+
+def calc_nayin(lunar_year: int) -> str:
+    """纳音五行（完整名称，如「大林木」）：按农历年六十甲子序号两两一组取纳音。"""
+    jiazi_index = (lunar_year - 4) % 60
+    return NAYIN[jiazi_index // 2]
 
 
 MONTH_NAMES = {
@@ -112,6 +129,7 @@ def compute_fortune(birth_date: date | None, birth_time: time | None) -> Fortune
             zodiac_sign=None,
             chinese_zodiac=None,
             five_element=None,
+            nayin=None,
             birth_time_display="未填" if birth_time is None else birth_time.strftime("%H:%M"),
         )
 
@@ -124,5 +142,6 @@ def compute_fortune(birth_date: date | None, birth_time: time | None) -> Fortune
         zodiac_sign=calc_zodiac_sign(birth_date),
         chinese_zodiac=calc_chinese_zodiac(lunar_year),
         five_element=calc_five_element(lunar_year),
+        nayin=calc_nayin(lunar_year),
         birth_time_display="未填" if birth_time is None else birth_time.strftime("%H:%M"),
     )
