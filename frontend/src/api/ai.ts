@@ -19,6 +19,7 @@ export interface ChatMessage {
   id: number
   role: string
   content: string
+  reasoning: string | null
   linked_date: string | null
   created_at: string
 }

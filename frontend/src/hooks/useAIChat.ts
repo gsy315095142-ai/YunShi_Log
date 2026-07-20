@@ -20,6 +20,7 @@ export function useAIChat() {
         id: Date.now(),
         role: 'user',
         content: text,
+        reasoning: null,
         linked_date: linkedDate || null,
         created_at: new Date().toISOString(),
       },

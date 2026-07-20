@@ -26,6 +26,7 @@ class ChatMessageItem(BaseModel):
     id: int
     role: str
     content: str
+    reasoning: str | None = None
     linked_date: date | None
     created_at: str
 

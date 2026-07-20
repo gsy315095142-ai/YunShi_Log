@@ -11,7 +11,8 @@ async def call_provider(
     base_url: str | None,
     messages: list[dict],
     model: str | None = None,
-) -> str:
+) -> dict:
+    """路由到厂商 adapter，返回 {"content": 正文, "reasoning": 思考内容或 None}。"""
     if provider == "deepseek":
         return await deepseek.chat_completion(api_key=api_key, messages=messages, base_url=base_url, model=model or "deepseek-chat")
     if provider == "zhipu":

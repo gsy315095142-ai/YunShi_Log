@@ -240,6 +240,40 @@
   border: 1px solid var(--color-border);
 }
 
+/* —— 思考内容框：与发言气泡区分 —— */
+.thinking-box {
+  margin-bottom: 6px;
+  padding: 8px 12px;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 12px;
+  background: var(--color-surface-soft);
+}
+
+.thinking-box .thinking-label {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+}
+
+.thinking-box p {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.thinking-box.empty p {
+  font-style: italic;
+  opacity: 0.75;
+}
+
 .bubble .tag {
   display: inline-block;
   margin-top: 4px;

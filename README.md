@@ -4,8 +4,19 @@
 
 ## 当前状态
 
-- Phase 0～4 第一版骨架已搭建（后端 API + SQLite + 前端 SPA）
+- Phase 1～4 已完成（后端 API + SQLite + 前端 SPA），Phase 5 部署文档就绪、待服务器执行
+- 当前版本 v0.1.26072001（登录页可查看版本更新说明）
 - 需求与设计见 [`docs/PROJECT_DESIGN.md`](docs/PROJECT_DESIGN.md)
+
+## 功能一览
+
+- **个人信息**：姓名、公历生日、出生时间（可选）、MBTI；自动推算农历、星座、生肖、天干五行、纳音五行、日主五行（三种五行各配 ⓘ 说明弹窗）
+- **每日记录**：月历视图，同日多条记录，底部弹层增删改
+- **AI 测算**：「测算大师」聊天式解读，支持 DeepSeek / 智谱
+  - 自动读取个人命理档案（以日主五行为本命核心）
+  - 双层对话记忆：最近 20 条原文 + 更早对话滚动压缩为摘要
+  - 思考模式默认开启，思考内容独立框展示
+  - 输入 @ 关联某日记录；SearXNG 联网搜索辅助分析
 
 ## 本地启动
 
@@ -58,20 +69,21 @@ backend/app/
   auth/       登录注册 JWT
   profile/    个人信息
   records/    每日记录
-  fortune/    农历/星座/五行/生肖推算（纯函数）
-  ai/         AI 配置与聊天
+  fortune/    农历/星座/生肖/三种五行推算（纯函数）
+  ai/         AI 配置、聊天、上下文拼装、摘要压缩
     providers/  DeepSeek、智谱独立适配
-  search/     联网搜索占位（待对接）
-  db/         SQLite 模型与初始化
+  search/     SearXNG 联网搜索（已对接）
+  db/         SQLite 模型、初始化与轻量列迁移
 frontend/src/
   pages/      各页面
   api/        按域拆分的 API 客户端
-  components/ 布局、路由守卫
+  components/ 布局、路由守卫、日历格子、记录弹层、聊天窗口等
+  hooks/      useMonthRecords、useAIChat
 ```
 
 ## 待完成
 
-- 生产环境部署文档与配置
+- 阿里云实际上线部署（步骤见 [`docs/DEPLOY_BAOTA.md`](docs/DEPLOY_BAOTA.md)）
 
 ## 联网搜索（SearXNG）
 

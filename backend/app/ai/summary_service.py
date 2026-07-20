@@ -78,7 +78,8 @@ async def get_chat_summary(
             {"role": "user", "content": prompt},
         ]
         try:
-            new_summary = (await call_provider(provider, api_key, base_url, messages, model)).strip()
+            result = await call_provider(provider, api_key, base_url, messages, model)
+            new_summary = result["content"].strip()
             if new_summary:
                 row.summary = new_summary
                 row.summarized_up_to_id = pending[-1].id

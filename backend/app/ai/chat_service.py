@@ -53,16 +53,20 @@ async def send_chat(db: Session, user: User, body: ChatRequest) -> ChatResponse:
     )
 
     try:
-        reply_text = await call_provider(provider, api_key, base_url, messages, model)
+        reply = await call_provider(provider, api_key, base_url, messages, model)
     except HTTPException:
         raise
     except Exception as exc:
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=f"AI 调用失败: {exc}") from exc
 
+    reply_text = reply["content"]
+    reasoning = reply.get("reasoning")
+
     assistant_msg = AIChatMessage(
         user_id=user.id,
         role="assistant",
         content=reply_text,
+        reasoning=reasoning,
         linked_date=body.linked_date,
     )
     db.add(assistant_msg)
@@ -75,6 +79,7 @@ async def send_chat(db: Session, user: User, body: ChatRequest) -> ChatResponse:
             id=assistant_msg.id,
             role=assistant_msg.role,
             content=assistant_msg.content,
+            reasoning=assistant_msg.reasoning,
             linked_date=assistant_msg.linked_date,
             created_at=assistant_msg.created_at.isoformat(),
         ),
@@ -95,6 +100,7 @@ def list_chat_history(db: Session, user: User, limit: int = 50) -> list[ChatMess
             id=r.id,
             role=r.role,
             content=r.content,
+            reasoning=r.reasoning,
             linked_date=r.linked_date,
             created_at=r.created_at.isoformat(),
         )
