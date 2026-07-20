@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { fetchProfile, saveProfile } from '../api/profile'
 import { ApiError } from '../api/client'
+import { DateSelect, TimeSelect } from '../components/DateTimeSelects'
 import './ProfilePage.css'
 
 /** 三种五行算法的说明文案（点击格子 ⓘ 弹出） */
@@ -69,6 +70,10 @@ export default function ProfilePage() {
   const onSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setMessage('')
+    if (!birthDate) {
+      setMessage('请选择公历生日')
+      return
+    }
     try {
       const saved = await saveProfile({
         display_name: displayName,
@@ -102,11 +107,11 @@ export default function ProfilePage() {
         </label>
         <label>
           公历生日
-          <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
+          <DateSelect value={birthDate} onChange={setBirthDate} />
         </label>
         <label>
           出生时间（可选）
-          <input type="time" value={birthTime} onChange={(e) => setBirthTime(e.target.value)} />
+          <TimeSelect value={birthTime} onChange={setBirthTime} />
         </label>
         <label>
           MBTI（可选）

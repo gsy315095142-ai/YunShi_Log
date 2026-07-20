@@ -24,6 +24,17 @@
   color: var(--color-text);
 }
 
+/* 年月日 / 时分 独立下拉行 */
+.dt-row {
+  display: flex;
+  gap: 8px;
+}
+
+.dt-row select {
+  flex: 1;
+  min-width: 0;
+}
+
 .profile-page form.card button {
   width: 100%;
   padding: 12px;
