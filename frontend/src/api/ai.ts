@@ -15,6 +15,12 @@ export interface AISettings {
   model: string
 }
 
+export interface RecordAction {
+  action: string // "created" 新增 | "updated" 覆盖更新
+  date: string // YYYY-MM-DD
+  preview: string
+}
+
 export interface ChatMessage {
   id: number
   role: string
@@ -22,6 +28,7 @@ export interface ChatMessage {
   reasoning: string | null
   linked_date: string | null
   created_at: string
+  record_actions?: RecordAction[] | null
 }
 
 export async function fetchProviders() {

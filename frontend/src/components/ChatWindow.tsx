@@ -13,6 +13,12 @@ export default function ChatWindow({ messages, sending }: ChatWindowProps) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, sending])
 
+  // 「2026-07-20」→「7月20日」
+  const fmtActionDate = (iso: string) => {
+    const [, m, d] = iso.split('-')
+    return `${Number(m)}月${Number(d)}日`
+  }
+
   return (
     <div className="chat-window">
       {messages.length === 0 && <p className="empty-tip">向测算大师提问，输入 @ 可关联某日记录</p>}
@@ -25,6 +31,11 @@ export default function ChatWindow({ messages, sending }: ChatWindowProps) {
             </div>
           )}
           <p>{m.content}</p>
+          {m.record_actions?.map((a, i) => (
+            <span key={i} className="tag action-tag">
+              ✏️ 已{a.action === 'created' ? '新增' : '更新'} {fmtActionDate(a.date)} 的记录
+            </span>
+          ))}
           {m.linked_date && <span className="tag">📅 {m.linked_date}</span>}
         </div>
       ))}

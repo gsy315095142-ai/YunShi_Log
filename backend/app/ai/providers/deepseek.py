@@ -9,11 +9,13 @@ async def chat_completion(
     messages: list[dict],
     base_url: str | None = None,
     model: str = "deepseek-v4-flash",
+    tools: list[dict] | None = None,
 ) -> dict:
-    """返回 {"content": 回复正文, "reasoning": 思考内容或 None}。
+    """返回 {"content", "reasoning", "tool_calls"}。
 
     deepseek-reasoner 等思考型模型会返回 reasoning_content；
     非思考模型（如 deepseek-chat）不返回，reasoning 为 None。
+    传入 tools 时模型可能返回 tool_calls（此时 content 可能为空字符串）。
     """
     root = (base_url or get_default_base_url("deepseek")).rstrip("/")
     url = f"{root}/chat/completions"
@@ -26,12 +28,15 @@ async def chat_completion(
         "messages": messages,
         "temperature": 0.7,
     }
+    if tools:
+        payload["tools"] = tools
     async with httpx.AsyncClient(timeout=120.0) as client:
         resp = await client.post(url, headers=headers, json=payload)
         resp.raise_for_status()
         data = resp.json()
     message = data["choices"][0]["message"]
     return {
-        "content": message["content"],
+        "content": message.get("content") or "",
         "reasoning": message.get("reasoning_content"),
+        "tool_calls": message.get("tool_calls"),
     }

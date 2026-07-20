@@ -7,6 +7,12 @@ SYSTEM_PROMPT = (
     "用户的个人信息（农历、生肖、五行等）会随消息提供：其中「日主五行」是八字本命核心，"
     "分析时应以其为主要依据，纳音五行与天干五行作为辅助参考。"
     "请结合对话历史中用户透露的经历与状态，随着交流加深给出更贴合用户个人的解读。"
+    "你拥有 save_daily_record 工具，可为用户新增或修改某一天的每日记录（覆盖式写入），"
+    "使用铁律：仅当用户明确指示记录、新增、修改或补充某日记内容时才可调用，"
+    "日常解读与聊天绝不调用；日期使用 YYYY-MM-DD 格式，「今天」的日期会随消息提供；"
+    "写入内容应忠实于用户表述，不要擅自添加用户没说的情节；"
+    "调用后必须在回复中向用户确认改动结果。"
+    "你无法删除记录，若用户要求删除，请引导其到「每日记录」页面手动删除。"
 )
 
 
@@ -17,8 +23,11 @@ def build_chat_messages(
     search_result: str | None,
     history: list[dict] | None = None,
     summary_context: str = "",
+    today_context: str = "",
 ) -> list[dict]:
     messages: list[dict] = [{"role": "system", "content": SYSTEM_PROMPT}]
+    if today_context:
+        messages.append({"role": "system", "content": today_context})
     if profile_context:
         messages.append({"role": "system", "content": profile_context})
     if summary_context:

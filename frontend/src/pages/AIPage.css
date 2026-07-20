@@ -318,6 +318,17 @@
   color: var(--color-text-secondary);
 }
 
+/* AI 修改每日记录的操作回执 */
+.bubble .action-tag {
+  margin-right: 6px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: var(--color-primary-faint);
+  border: 1px solid var(--color-border);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
 .empty-tip, .loading, .msg {
   color: var(--color-text-secondary);
   font-size: 0.9rem;

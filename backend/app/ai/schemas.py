@@ -22,6 +22,14 @@ class ChatRequest(BaseModel):
     linked_date: date | None = None
 
 
+class RecordAction(BaseModel):
+    """AI 通过工具对每日记录执行的一次写入操作回执。"""
+
+    action: str  # "created" 新增 | "updated" 覆盖更新
+    date: str  # YYYY-MM-DD
+    preview: str  # 内容前 50 字预览
+
+
 class ChatMessageItem(BaseModel):
     id: int
     role: str
@@ -29,6 +37,7 @@ class ChatMessageItem(BaseModel):
     reasoning: str | None = None
     linked_date: date | None
     created_at: str
+    record_actions: list[RecordAction] | None = None
 
     model_config = {"from_attributes": True}
 

@@ -5,8 +5,15 @@ from datetime import date
 from sqlalchemy.orm import Session
 
 from app.db.models import User
+from app.fortune.calculator import format_lunar
 from app.profile.service import get_profile
 from app.records.service import list_day_records
+
+
+def load_today_context() -> str:
+    """当前日期上下文：让 AI 知道「今天」是哪天（日期换算、工具调用都依赖它）。"""
+    today = date.today()
+    return f"【当前日期】今天是 {today.isoformat()}（农历 {format_lunar(today, None)}）"
 
 
 def load_day_records_context(db: Session, user: User, linked_date: date | None) -> str:
