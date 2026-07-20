@@ -21,7 +21,8 @@ PROVIDER_DEFAULTS: dict[str, ProviderDefaults] = {
     "zhipu": ProviderDefaults(
         id="zhipu",
         name="智谱",
-        default_base_url="https://open.bigmodel.cn/api/paas/v4",
+        # GLM Coding Plan 套餐专属端点（通用按量 API 为 /api/paas/v4）
+        default_base_url="https://open.bigmodel.cn/api/coding/paas/v4",
         default_model="glm-5.1",
         models=["glm-5.2", "glm-5.1"],
     ),
