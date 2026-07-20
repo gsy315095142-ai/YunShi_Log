@@ -23,8 +23,8 @@ export default function ChatWindow({ messages, sending }: ChatWindowProps) {
     <div className="chat-window">
       {messages.length === 0 && <p className="empty-tip">向测算大师提问，输入 @ 可关联某日记录</p>}
       {messages.map((m) => (
-        <div key={m.id} className={`bubble ${m.role}`}>
-          {m.role === 'assistant' && (
+        <div key={m.id} className={`bubble ${m.role}${m.notice ? ' notice' : ''}`}>
+          {m.role === 'assistant' && !m.notice && (
             <div className={`thinking-box${m.reasoning ? '' : ' empty'}`}>
               <span className="thinking-label">💭 思考过程</span>
               <p>{m.reasoning || '当前AI未返回思考内容'}</p>

@@ -29,6 +29,8 @@ export interface ChatMessage {
   linked_date: string | null
   created_at: string
   record_actions?: RecordAction[] | null
+  /** 前端本地提示气泡（如未配置 API Key），不入库、不显示思考框 */
+  notice?: boolean
 }
 
 export async function fetchProviders() {

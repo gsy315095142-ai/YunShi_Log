@@ -14,7 +14,7 @@ export default function AIPage() {
   const [dateOptions, setDateOptions] = useState<string[]>([])
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [input, setInput] = useState('')
-  const { messages, sending, chatMsg, send } = useAIChat()
+  const { messages, sending, send } = useAIChat()
 
   useEffect(() => {
     const now = new Date()
@@ -93,7 +93,6 @@ export default function AIPage() {
             </button>
           </div>
         </div>
-        {chatMsg && <p className="msg error">{chatMsg}</p>}
       </div>
     </div>
   )

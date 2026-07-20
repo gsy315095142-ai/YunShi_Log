@@ -5,14 +5,12 @@ import { ApiError } from '../api/client'
 export function useAIChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [sending, setSending] = useState(false)
-  const [chatMsg, setChatMsg] = useState('')
 
   useEffect(() => {
     fetchChatHistory().then(setMessages)
   }, [])
 
   const send = async (text: string, linkedDate: string) => {
-    setChatMsg('')
     setSending(true)
     setMessages((prev) => [
       ...prev,
@@ -29,11 +27,24 @@ export function useAIChat() {
       const res = await sendChat(text, linkedDate || null)
       setMessages((prev) => [...prev, res.message])
     } catch (err) {
-      setChatMsg(err instanceof ApiError ? err.message : '发送失败')
+      // 失败（如未配置 API Key）以 AI 提示气泡的形式展现在聊天窗口，不落库
+      const notice = err instanceof ApiError ? err.message : '发送失败，请稍后再试'
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          role: 'assistant',
+          content: `⚠️ ${notice}`,
+          reasoning: null,
+          linked_date: null,
+          created_at: new Date().toISOString(),
+          notice: true,
+        },
+      ])
     } finally {
       setSending(false)
     }
   }
 
-  return { messages, sending, chatMsg, send }
+  return { messages, sending, send }
 }

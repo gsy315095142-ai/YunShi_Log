@@ -329,6 +329,12 @@
   font-weight: 600;
 }
 
+/* 本地提示气泡（未配置 API Key 等），警示色调 */
+.bubble.notice {
+  border: 1px dashed var(--color-danger);
+  background: #fff7f5;
+}
+
 .empty-tip, .loading, .msg {
   color: var(--color-text-secondary);
   font-size: 0.9rem;
