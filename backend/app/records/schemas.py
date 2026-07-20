@@ -38,4 +38,4 @@ class TodayInfoResponse(BaseModel):
     date: date
     lunar: str
     count: int
-    previews: list[str]
+    content: str | None

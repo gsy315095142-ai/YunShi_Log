@@ -24,7 +24,7 @@ export interface TodayInfo {
   date: string
   lunar: string
   count: number
-  previews: string[]
+  content: string | null
 }
 
 export async function fetchTodayInfo() {

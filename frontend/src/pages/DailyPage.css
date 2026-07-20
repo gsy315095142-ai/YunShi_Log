@@ -467,9 +467,8 @@
 /* —— 今日卡片 —— */
 .today-card {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  gap: 10px;
   cursor: pointer;
   border: 1px solid var(--color-border);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
@@ -480,16 +479,14 @@
   box-shadow: 0 4px 16px rgba(46, 36, 56, 0.1);
 }
 
-.today-left {
+.today-header {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex-shrink: 0;
+  align-items: baseline;
+  gap: 8px;
 }
 
 .today-tag {
   display: inline-block;
-  width: fit-content;
   font-size: 0.65rem;
   color: #fff;
   background: var(--color-primary);
@@ -499,7 +496,7 @@
 }
 
 .today-date {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--color-text);
 }
@@ -507,42 +504,36 @@
 .today-lunar {
   font-size: 0.75rem;
   color: var(--color-text-secondary);
+  margin-left: auto;
 }
 
-.today-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-  min-width: 0;
-  text-align: right;
+.today-body {
+  border-top: 1px solid var(--color-border);
+  padding-top: 10px;
 }
 
-.today-records {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.today-count {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--color-primary);
-}
-
-.today-preview {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
-  white-space: nowrap;
+.today-content {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 160px;
 }
 
 .today-empty {
-  font-size: 0.8rem;
+  margin: 0;
+  font-size: 0.85rem;
   color: var(--color-text-secondary);
+}
+
+.today-footer {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .today-cta {
