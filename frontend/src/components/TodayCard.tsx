@@ -28,6 +28,12 @@ export default function TodayCard({ info, onCreate, onUpdate, onDelete, onFortun
     if (!editing) setDraft(info?.content ?? '')
   }, [info?.content, editing])
 
+  // 编辑态时隐藏全局底部 Tab 栏，聚焦编辑（CSS 见 Layout.css）
+  useEffect(() => {
+    document.body.classList.toggle('record-editing', editing)
+    return () => document.body.classList.remove('record-editing')
+  }, [editing])
+
   if (!info) return null
 
   const d = new Date(`${info.date}T00:00:00`)
@@ -69,15 +75,45 @@ export default function TodayCard({ info, onCreate, onUpdate, onDelete, onFortun
   }
 
   return (
-    <div className="card today-card">
-      <div className="today-header">
-        <span className="today-tag">今天</span>
-        <strong className="today-date">
-          {d.getMonth() + 1}月{d.getDate()}日 {weekday}
-        </strong>
-        <span className="today-lunar">农历 {lunarDay}</span>
+    <div className="today-block">
+      <div className="card today-card">
+        <div className="today-header">
+          <span className="today-tag">今天</span>
+          <strong className="today-date">
+            {d.getMonth() + 1}月{d.getDate()}日 {weekday}
+          </strong>
+          <span className="today-lunar">农历 {lunarDay}</span>
+        </div>
+
+        <div className="today-body">
+          {hasRecord && !editing ? (
+            <p className="today-content">{info.content}</p>
+          ) : (
+            <div className="today-editor">
+              <textarea
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder="记录今天的大事小情…"
+                rows={3}
+                autoFocus={editing}
+              />
+              <div className="today-editor-actions">
+                {editing && (
+                  <button type="button" className="cancel-btn" onClick={cancelEdit}>
+                    取消
+                  </button>
+                )}
+                <button type="button" className="submit-btn" disabled={saving || !draft.trim()} onClick={save}>
+                  {saving ? '保存中…' : '保存'}
+                </button>
+              </div>
+            </div>
+          )}
+          {error && <p className="today-error">{error}</p>}
+        </div>
+
         {hasRecord && !editing && (
-          <div className="item-actions today-actions">
+          <div className="today-actions-row">
             <button type="button" className="icon-btn" aria-label="编辑" title="编辑" onClick={startEdit}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /></svg>
             </button>
@@ -92,55 +128,30 @@ export default function TodayCard({ info, onCreate, onUpdate, onDelete, onFortun
             </button>
           </div>
         )}
-      </div>
 
-      <div className="today-body">
-        {hasRecord && !editing ? (
-          <p className="today-content">{info.content}</p>
-        ) : (
-          <div className="today-editor">
-            <textarea
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder="记录今天的大事小情…"
-              rows={3}
-              autoFocus={editing}
-            />
-            <div className="today-editor-actions">
-              {editing && (
-                <button type="button" className="cancel-btn" onClick={cancelEdit}>
+        {confirming && hasRecord && (
+          <div className="confirm-backdrop" onClick={() => setConfirming(false)}>
+            <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
+              <h4>删除今天的记录？</h4>
+              <p className="confirm-content">{info.content}</p>
+              <p className="confirm-tip">删除后不可恢复</p>
+              <div className="confirm-actions">
+                <button type="button" className="cancel-btn" onClick={() => setConfirming(false)}>
                   取消
                 </button>
-              )}
-              <button type="button" className="submit-btn" disabled={saving || !draft.trim()} onClick={save}>
-                {saving ? '保存中…' : '保存'}
-              </button>
+                <button type="button" className="danger-btn" onClick={remove}>
+                  确认删除
+                </button>
+              </div>
             </div>
           </div>
         )}
-        {error && <p className="today-error">{error}</p>}
       </div>
 
-      <button type="button" className="today-fortune-btn" onClick={onFortune}>
-        🔮 测算今日运势 ›
-      </button>
-
-      {confirming && hasRecord && (
-        <div className="confirm-backdrop" onClick={() => setConfirming(false)}>
-          <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
-            <h4>删除今天的记录？</h4>
-            <p className="confirm-content">{info.content}</p>
-            <p className="confirm-tip">删除后不可恢复</p>
-            <div className="confirm-actions">
-              <button type="button" className="cancel-btn" onClick={() => setConfirming(false)}>
-                取消
-              </button>
-              <button type="button" className="danger-btn" onClick={remove}>
-                确认删除
-              </button>
-            </div>
-          </div>
-        </div>
+      {!editing && (
+        <button type="button" className="today-fortune-btn" onClick={onFortune}>
+          🔮 测算今日运势 ›
+        </button>
       )}
     </div>
   )

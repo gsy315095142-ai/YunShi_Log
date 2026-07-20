@@ -465,6 +465,12 @@
 }
 
 /* —— 今日卡片 —— */
+.today-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .today-card {
   display: flex;
   flex-direction: column;
@@ -500,12 +506,16 @@
   margin-left: auto;
 }
 
-/* 卡片头部右侧的编辑/删除图标，比列表里的更紧凑 */
-.today-actions {
-  gap: 0;
+/* 内容下方的操作行：编辑/删除图标右对齐，不挤占日期行 */
+.today-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  border-top: 1px solid var(--color-border);
+  padding-top: 6px;
 }
 
-.today-actions .icon-btn {
+.today-actions-row .icon-btn {
   width: 30px;
   height: 30px;
 }
