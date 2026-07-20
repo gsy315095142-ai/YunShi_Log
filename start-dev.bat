@@ -22,10 +22,19 @@ if errorlevel 1 (
 echo [3/3] Starting frontend...
 start "SuYunShi-Frontend" cmd /k "cd /d %~dp0frontend && run-frontend.bat"
 
+rem Detect LAN IP via helper script (default-gateway interface, fallback to first IPv4)
+set "LAN_IP="
+for /f "delims=" %%i in ('powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\get-lan-ip.ps1"') do set "LAN_IP=%%i"
+
 echo.
 echo ========================================
 echo   Ready - open in browser:
-echo   http://127.0.0.1:5173/sylog/
+echo   Local:   http://127.0.0.1:5173/sylog/
+if defined LAN_IP (
+  echo   LAN:     http://%LAN_IP%:5173/sylog/
+) else (
+  echo   LAN:     ^(could not detect LAN IP^)
+)
 echo.
 echo   API docs: http://127.0.0.1:8000/docs
 echo   Login: Guosy / 1234567890

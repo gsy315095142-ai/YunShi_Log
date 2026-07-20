@@ -18,7 +18,7 @@ export default function AuthHero({ title, subtitle }: AuthHeroProps) {
         <span className="auth-orbit-ring" />
         <span className="auth-orbit-ring auth-orbit-ring--inner" />
       </div>
-      <p className="auth-brand">苏运势 Log</p>
+      <p className="auth-brand">运势 Log</p>
       <h1 className="auth-title">{title}</h1>
       <p className="auth-subtitle">{subtitle}</p>
       <div className="auth-elements" aria-label="五行">

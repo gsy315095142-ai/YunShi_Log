@@ -5,6 +5,7 @@ export default defineConfig({
   base: '/sylog/',
   plugins: [react()],
   server: {
+    host: true, // 监听局域网，同网段设备可通过本机 IP 访问
     port: 5173,
     proxy: {
       '/api': {

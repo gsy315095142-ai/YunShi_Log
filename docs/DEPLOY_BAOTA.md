@@ -181,7 +181,7 @@ environment=JWT_SECRET="你的密钥",CORS_ORIGINS="http://www.lumiclaw.top,http
 网站 **lumiclaw.top** → **设置** → **配置文件**，在 `server { ... }` 内增加：
 
 ```nginx
-# 苏运势 Log 前端（SPA）
+# 运势 Log 前端（SPA）
 location /sylog/ {
     root /www/wwwroot/lumiclaw.top;
     try_files $uri $uri/ /sylog/index.html;
