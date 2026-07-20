@@ -16,5 +16,5 @@ async def call_provider(
     if provider == "deepseek":
         return await deepseek.chat_completion(api_key=api_key, messages=messages, base_url=base_url, model=model or "deepseek-chat")
     if provider == "zhipu":
-        return await zhipu.chat_completion(api_key=api_key, messages=messages, base_url=base_url, model=model or "glm-4-flash")
+        return await zhipu.chat_completion(api_key=api_key, messages=messages, base_url=base_url, model=model or "glm-4.5-flash")
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="不支持的 AI 厂商")
