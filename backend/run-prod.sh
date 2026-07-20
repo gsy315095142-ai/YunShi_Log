@@ -6,4 +6,10 @@ export PYTHONUNBUFFERED=1
 set -a
 [ -f .env ] && . ./.env
 set +a
-exec uvicorn app.main:app --host 127.0.0.1 --port 8000
+# 优先使用本目录 venv 中的 uvicorn（Supervisor 直接调用本脚本时无需先激活 venv）
+if [ -x .venv/bin/uvicorn ]; then
+  UVICORN=.venv/bin/uvicorn
+else
+  UVICORN=uvicorn
+fi
+exec "$UVICORN" app.main:app --host 127.0.0.1 --port 8000
