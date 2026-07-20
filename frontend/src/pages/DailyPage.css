@@ -459,8 +459,8 @@
   font-size: 0.9rem;
 }
 
-.sheet-editor .msg {
-  margin: 8px 0 0;
+.sheet-msg {
+  margin: 4px 0 0;
   text-align: center;
 }
 

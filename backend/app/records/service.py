@@ -89,6 +89,11 @@ def create_record(db: Session, user: User, body: RecordCreateRequest) -> RecordI
         .filter(DailyRecord.user_id == user.id, DailyRecord.record_date == body.record_date)
         .count()
     )
+    if count >= 1:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="该日期已有记录，请编辑或删除后再新增",
+        )
     row = DailyRecord(
         user_id=user.id,
         record_date=body.record_date,

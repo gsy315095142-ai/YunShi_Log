@@ -111,21 +111,23 @@ export default function DaySheet({
               )
             )}
           </ul>
+          {message && <p className="msg sheet-msg">{message}</p>}
         </div>
-        <div className="sheet-editor">
-          <textarea
-            value={editorText}
-            onChange={(e) => onEditorChange(e.target.value)}
-            placeholder="新增记录内容"
-            rows={3}
-          />
-          <div className="editor-actions">
-            <button type="button" className="submit-btn" onClick={onSubmit}>
-              新增记录
-            </button>
+        {records.length === 0 && (
+          <div className="sheet-editor">
+            <textarea
+              value={editorText}
+              onChange={(e) => onEditorChange(e.target.value)}
+              placeholder="新增记录内容"
+              rows={3}
+            />
+            <div className="editor-actions">
+              <button type="button" className="submit-btn" onClick={onSubmit}>
+                新增记录
+              </button>
+            </div>
           </div>
-          {message && <p className="msg">{message}</p>}
-        </div>
+        )}
       </div>
 
       {confirmingItem && (
