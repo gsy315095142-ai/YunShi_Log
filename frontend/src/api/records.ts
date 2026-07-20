@@ -20,6 +20,17 @@ export interface MonthRecords {
   records_by_date: Record<string, RecordItem[]>
 }
 
+export interface TodayInfo {
+  date: string
+  lunar: string
+  count: number
+  previews: string[]
+}
+
+export async function fetchTodayInfo() {
+  return apiFetch<TodayInfo>('/api/v1/records/today')
+}
+
 export async function fetchMonthRecords(year: number, month: number) {
   return apiFetch<MonthRecords>(`/api/v1/records?year=${year}&month=${month}`)
 }

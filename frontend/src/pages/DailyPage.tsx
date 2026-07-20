@@ -1,14 +1,17 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   createRecord,
   deleteRecord,
+  fetchTodayInfo,
   updateRecord,
   type RecordItem,
+  type TodayInfo,
 } from '../api/records'
 import { ApiError } from '../api/client'
 import { useMonthRecords } from '../hooks/useMonthRecords'
 import CalendarGrid from '../components/CalendarGrid'
 import DaySheet from '../components/DaySheet'
+import TodayCard from '../components/TodayCard'
 import './DailyPage.css'
 
 export default function DailyPage() {
@@ -18,6 +21,17 @@ export default function DailyPage() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<number | null>(null)
   const [message, setMessage] = useState('')
+  const [todayInfo, setTodayInfo] = useState<TodayInfo | null>(null)
+
+  const loadToday = () => {
+    fetchTodayInfo()
+      .then(setTodayInfo)
+      .catch(() => {})
+  }
+
+  useEffect(() => {
+    loadToday()
+  }, [])
 
   const resetEditor = () => {
     setEditingId(null)
@@ -56,6 +70,7 @@ export default function DailyPage() {
       setEditorText('')
       setEditingId(null)
       loadMonth()
+      loadToday()
       setMessage('已保存')
     } catch (err) {
       setMessage(err instanceof ApiError ? err.message : '保存失败')
@@ -83,6 +98,7 @@ export default function DailyPage() {
     setConfirmingDeleteId(null)
     if (editingId === id) cancelEdit()
     loadMonth()
+    loadToday()
   }
 
   return (
@@ -96,6 +112,8 @@ export default function DailyPage() {
         onShiftMonth={onShiftMonth}
         onOpenDay={openDay}
       />
+
+      <TodayCard info={todayInfo} onOpen={openDay} />
 
       {selectedDate && (
         <DaySheet

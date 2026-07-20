@@ -5,12 +5,14 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.db.models import DailyRecord, User
+from app.fortune.calculator import format_lunar
 from app.records.schemas import (
     DaySummary,
     MonthRecordsResponse,
     RecordCreateRequest,
     RecordItem,
     RecordUpdateRequest,
+    TodayInfoResponse,
 )
 
 PREVIEW_MAX = 12
@@ -67,6 +69,18 @@ def list_day_records(db: Session, user: User, record_date: date) -> list[RecordI
         .all()
     )
     return [RecordItem.model_validate(r) for r in rows]
+
+
+def get_today_info(db: Session, user: User) -> TodayInfoResponse:
+    """今日卡片信息：公历日期、农历、当日记录条数与摘要（最多 2 条）。"""
+    today = date.today()
+    items = list_day_records(db, user, today)
+    return TodayInfoResponse(
+        date=today,
+        lunar=format_lunar(today, None),
+        count=len(items),
+        previews=[_preview(item.content) for item in items[:2]],
+    )
 
 
 def create_record(db: Session, user: User, body: RecordCreateRequest) -> RecordItem:

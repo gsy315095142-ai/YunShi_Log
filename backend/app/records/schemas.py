@@ -32,3 +32,10 @@ class MonthRecordsResponse(BaseModel):
     month: int
     days: list[DaySummary]
     records_by_date: dict[str, list[RecordItem]]
+
+
+class TodayInfoResponse(BaseModel):
+    date: date
+    lunar: str
+    count: int
+    previews: list[str]

@@ -11,10 +11,12 @@ from app.records.schemas import (
     RecordCreateRequest,
     RecordItem,
     RecordUpdateRequest,
+    TodayInfoResponse,
 )
 from app.records.service import (
     create_record,
     delete_record,
+    get_today_info,
     list_day_records,
     list_month_records,
     update_record,
@@ -31,6 +33,14 @@ def get_month_records(
     db: Session = Depends(get_db),
 ):
     return list_month_records(db, user, year, month)
+
+
+@router.get("/today", response_model=TodayInfoResponse)
+def get_today(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    return get_today_info(db, user)
 
 
 @router.get("/{record_date}", response_model=list[RecordItem])

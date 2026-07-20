@@ -44,16 +44,24 @@ export default function DaySheet({
             {records.map((item) => (
               <li key={item.id} className={editingId === item.id ? 'editing' : ''}>
                 <p>{item.content}</p>
-                <div className="actions">
-                  <button type="button" onClick={() => onStartEdit(item)}>
-                    编辑
+                <div className="item-actions">
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    aria-label="编辑"
+                    title="编辑"
+                    onClick={() => onStartEdit(item)}
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /></svg>
                   </button>
                   <button
                     type="button"
-                    className={confirmingDeleteId === item.id ? 'danger confirming' : 'danger'}
+                    className={`icon-btn danger${confirmingDeleteId === item.id ? ' confirming' : ''}`}
+                    aria-label="删除"
+                    title={confirmingDeleteId === item.id ? '再次点击确认删除' : '删除'}
                     onClick={() => onRemove(item.id)}
                   >
-                    {confirmingDeleteId === item.id ? '确认删除' : '删除'}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /></svg>
                   </button>
                 </div>
               </li>
