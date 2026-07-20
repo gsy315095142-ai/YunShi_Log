@@ -4,56 +4,77 @@
   gap: 16px;
 }
 
-.card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 16px;
-  box-shadow: 0 2px 10px rgba(46, 36, 56, 0.06);
-}
-
-.card h3 {
-  margin: 0 0 14px;
-  color: #2d2438;
-}
-
-.card label {
+/* —— 表单卡片 —— */
+.profile-page form.card label {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-bottom: 12px;
   font-size: 0.9rem;
+  color: var(--color-text-label);
 }
 
-.card input {
+.profile-page form.card input {
   padding: 10px 12px;
-  border: 1px solid #d8cde8;
-  border-radius: 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
   font-size: 1rem;
 }
 
-.card button {
+.profile-page form.card button {
   width: 100%;
   padding: 12px;
+  min-height: 44px;
   border: none;
-  border-radius: 10px;
-  background: #7c3aed;
+  border-radius: var(--radius-control);
+  background: var(--color-primary);
   color: #fff;
 }
 
-.info-grid {
+/* —— 命理信息瓷贴 —— */
+.fortune-grid {
   display: grid;
-  grid-template-columns: 80px 1fr;
-  gap: 10px 12px;
-  font-size: 0.95rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
-.info-grid span {
-  color: #8b7faa;
+.fortune-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 10px;
+  border-radius: 12px;
+  background: var(--color-primary-faint);
+  border: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.fortune-label {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.1em;
+}
+
+.fortune-value {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.fortune-value.element {
+  color: var(--color-primary);
+  font-size: 1.2rem;
+}
+
+.fortune-value.lunar {
+  font-size: 0.95rem;
+  line-height: 1.4;
 }
 
 .loading, .msg {
   text-align: center;
-  color: #8b7faa;
+  color: var(--color-text-secondary);
 }
 
 .msg {

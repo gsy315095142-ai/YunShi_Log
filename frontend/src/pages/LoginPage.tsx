@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { login } from '../api/auth'
 import { ApiError } from '../api/client'
 import AuthHero from '../components/AuthHero'
+import ChangelogModal from '../components/ChangelogModal'
+import { CHANGELOG } from '../data/changelog'
 import './AuthPages.css'
 
 export default function LoginPage() {
@@ -11,6 +13,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [changelogOpen, setChangelogOpen] = useState(false)
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -63,7 +66,12 @@ export default function LoginPage() {
             还没有账号？<Link to="/register">立即注册</Link>
           </p>
         </div>
+        <button type="button" className="changelog-entry-btn" onClick={() => setChangelogOpen(true)}>
+          更新说明
+          <span className="changelog-current">{CHANGELOG[0].version}</span>
+        </button>
         <p className="auth-footer">金木水火土，顺应天时 · 记录当下</p>
+        <ChangelogModal open={changelogOpen} onClose={() => setChangelogOpen(false)} />
       </div>
     </div>
   )

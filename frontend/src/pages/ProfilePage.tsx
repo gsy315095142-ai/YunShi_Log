@@ -13,7 +13,6 @@ export default function ProfilePage() {
     zodiac_sign: '',
     chinese_zodiac: '',
     five_element: '',
-    birth_time_display: '',
   })
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(true)
@@ -30,7 +29,6 @@ export default function ProfilePage() {
           zodiac_sign: p.zodiac_sign || '-',
           chinese_zodiac: p.chinese_zodiac || '-',
           five_element: p.five_element || '-',
-          birth_time_display: p.birth_time_display || '未填',
         })
       })
       .finally(() => setLoading(false))
@@ -51,7 +49,6 @@ export default function ProfilePage() {
         zodiac_sign: saved.zodiac_sign || '-',
         chinese_zodiac: saved.chinese_zodiac || '-',
         five_element: saved.five_element || '-',
-        birth_time_display: saved.birth_time_display || '未填',
       })
       setMessage('已保存')
     } catch (err) {
@@ -85,14 +82,25 @@ export default function ProfilePage() {
         {message && <p className="msg">{message}</p>}
       </form>
 
-      <div className="card readonly-card">
+      <div className="card fortune-card">
         <h3>命理信息</h3>
-        <div className="info-grid">
-          <span>农历</span><strong>{computed.lunar}</strong>
-          <span>星座</span><strong>{computed.zodiac_sign}</strong>
-          <span>生肖</span><strong>{computed.chinese_zodiac}</strong>
-          <span>五行</span><strong>{computed.five_element}</strong>
-          <span>出生时间</span><strong>{computed.birth_time_display}</strong>
+        <div className="fortune-grid">
+          <div className="fortune-tile">
+            <span className="fortune-label">星座</span>
+            <strong className="fortune-value">{computed.zodiac_sign}</strong>
+          </div>
+          <div className="fortune-tile">
+            <span className="fortune-label">生肖</span>
+            <strong className="fortune-value">{computed.chinese_zodiac}</strong>
+          </div>
+          <div className="fortune-tile">
+            <span className="fortune-label">五行</span>
+            <strong className="fortune-value element">{computed.five_element}</strong>
+          </div>
+          <div className="fortune-tile">
+            <span className="fortune-label">农历</span>
+            <strong className="fortune-value lunar">{computed.lunar}</strong>
+          </div>
         </div>
       </div>
     </div>

@@ -24,6 +24,7 @@ export default function DailyPage() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [editorText, setEditorText] = useState('')
   const [editingId, setEditingId] = useState<number | null>(null)
+  const [confirmingDeleteId, setConfirmingDeleteId] = useState<number | null>(null)
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(true)
 
@@ -54,21 +55,30 @@ export default function DailyPage() {
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ]
 
+  const resetEditor = () => {
+    setEditingId(null)
+    setEditorText('')
+    setConfirmingDeleteId(null)
+    setMessage('')
+  }
+
   const shiftMonth = (delta: number) => {
     const d = new Date(year, month - 1 + delta, 1)
     setYear(d.getFullYear())
     setMonth(d.getMonth() + 1)
     setSelectedDate(null)
-    setEditingId(null)
-    setEditorText('')
+    resetEditor()
   }
 
   const openDay = (day: number) => {
     const date = `${year}-${pad(month)}-${pad(day)}`
     setSelectedDate(date)
-    setEditingId(null)
-    setEditorText('')
-    setMessage('')
+    resetEditor()
+  }
+
+  const closeDay = () => {
+    setSelectedDate(null)
+    resetEditor()
   }
 
   const selectedRecords = selectedDate ? recordsByDate[selectedDate] || [] : []
@@ -94,11 +104,23 @@ export default function DailyPage() {
   const startEdit = (item: RecordItem) => {
     setEditingId(item.id)
     setEditorText(item.content)
+    setConfirmingDeleteId(null)
+    setMessage('')
+  }
+
+  const cancelEdit = () => {
+    setEditingId(null)
+    setEditorText('')
   }
 
   const removeRecord = async (id: number) => {
-    if (!confirm('确定删除这条记录？')) return
+    if (confirmingDeleteId !== id) {
+      setConfirmingDeleteId(id)
+      return
+    }
     await deleteRecord(id)
+    setConfirmingDeleteId(null)
+    if (editingId === id) cancelEdit()
     loadMonth()
   }
 
@@ -106,19 +128,21 @@ export default function DailyPage() {
     <div className="daily-page">
       <div className="card calendar-card">
         <div className="month-nav">
-          <button type="button" onClick={() => shiftMonth(-1)}>
+          <button type="button" onClick={() => shiftMonth(-1)} aria-label="上个月">
             ◀
           </button>
           <strong>
             {year}年{month}月
           </strong>
-          <button type="button" onClick={() => shiftMonth(1)}>
+          <button type="button" onClick={() => shiftMonth(1)} aria-label="下个月">
             ▶
           </button>
         </div>
         <div className="weekday-row">
-          {WEEKDAYS.map((w) => (
-            <span key={w}>{w}</span>
+          {WEEKDAYS.map((w, i) => (
+            <span key={w} className={i === 0 || i === 6 ? 'weekend' : ''}>
+              {w}
+            </span>
           ))}
         </div>
         {loading ? (
@@ -142,7 +166,10 @@ export default function DailyPage() {
                   } ${idx % 7 === 0 || idx % 7 === 6 ? 'weekend' : ''}`}
                   onClick={() => openDay(day)}
                 >
-                  <span className="day-num">{day}</span>
+                  <span className="day-top">
+                    <span className="day-num">{day}</span>
+                    {info && info.count > 1 && <span className="count-badge">{info.count}</span>}
+                  </span>
                   {info && <span className="preview">{info.preview}</span>}
                 </button>
               )
@@ -152,34 +179,56 @@ export default function DailyPage() {
       </div>
 
       {selectedDate && (
-        <div className="card day-panel">
-          <h3>{selectedDate} 的记录</h3>
-          {selectedRecords.length === 0 && <p className="empty-tip">暂无记录</p>}
-          <ul className="record-list">
-            {selectedRecords.map((item) => (
-              <li key={item.id}>
-                <p>{item.content}</p>
-                <div className="actions">
-                  <button type="button" onClick={() => startEdit(item)}>
-                    编辑
+        <div className="sheet-backdrop" onClick={closeDay}>
+          <div className="card day-sheet" onClick={(e) => e.stopPropagation()}>
+            <div className="sheet-header">
+              <h3>{selectedDate} 的记录</h3>
+              <button type="button" className="sheet-close" onClick={closeDay} aria-label="关闭">
+                ✕
+              </button>
+            </div>
+            <div className="sheet-body">
+              {selectedRecords.length === 0 && <p className="empty-tip">暂无记录，写下今天的第一条吧</p>}
+              <ul className="record-list">
+                {selectedRecords.map((item) => (
+                  <li key={item.id} className={editingId === item.id ? 'editing' : ''}>
+                    <p>{item.content}</p>
+                    <div className="actions">
+                      <button type="button" onClick={() => startEdit(item)}>
+                        编辑
+                      </button>
+                      <button
+                        type="button"
+                        className={confirmingDeleteId === item.id ? 'danger confirming' : 'danger'}
+                        onClick={() => removeRecord(item.id)}
+                      >
+                        {confirmingDeleteId === item.id ? '确认删除' : '删除'}
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="sheet-editor">
+              <textarea
+                value={editorText}
+                onChange={(e) => setEditorText(e.target.value)}
+                placeholder={editingId ? '编辑记录内容' : '新增记录内容'}
+                rows={3}
+              />
+              <div className="editor-actions">
+                {editingId && (
+                  <button type="button" className="cancel-btn" onClick={cancelEdit}>
+                    取消编辑
                   </button>
-                  <button type="button" className="danger" onClick={() => removeRecord(item.id)}>
-                    删除
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <textarea
-            value={editorText}
-            onChange={(e) => setEditorText(e.target.value)}
-            placeholder={editingId ? '编辑记录内容' : '新增记录内容'}
-            rows={3}
-          />
-          <button type="button" onClick={submitRecord}>
-            {editingId ? '更新记录' : '新增记录'}
-          </button>
-          {message && <p className="msg">{message}</p>}
+                )}
+                <button type="button" className="submit-btn" onClick={submitRecord}>
+                  {editingId ? '更新记录' : '新增记录'}
+                </button>
+              </div>
+              {message && <p className="msg">{message}</p>}
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { clearToken } from '../utils/token'
 import { fetchMe } from '../api/auth'
 import './Layout.css'
@@ -8,9 +8,17 @@ interface LayoutProps {
   children: React.ReactNode
 }
 
+const PAGE_TITLES: Record<string, string> = {
+  '/profile': '个人信息',
+  '/daily': '每日记录',
+  '/ai': 'AI 测算',
+}
+
 export default function Layout({ children }: LayoutProps) {
   const navigate = useNavigate()
+  const location = useLocation()
   const [username, setUsername] = useState('')
+  const pageTitle = PAGE_TITLES[location.pathname] ?? ''
 
   useEffect(() => {
     fetchMe()
@@ -26,7 +34,10 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="app-shell">
       <header className="app-header">
-        <h1>运势Log</h1>
+        <div className="header-title">
+          <h1>运势Log</h1>
+          {pageTitle && <span className="page-title">{pageTitle}</span>}
+        </div>
         <div className="header-right">
           {username && <span className="welcome">你好，{username}</span>}
           <button type="button" className="link-btn" onClick={logout}>

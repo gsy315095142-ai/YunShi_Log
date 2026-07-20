@@ -1,17 +1,16 @@
+/* —— AI 页：全高布局，消息区撑满剩余空间并内部滚动 —— */
 .ai-page {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 16px;
-  box-shadow: 0 2px 10px rgba(46, 36, 56, 0.06);
+  height: 100%;
 }
 
 /* —— 可折叠配置卡片 —— */
+.settings-card {
+  flex-shrink: 0;
+}
+
 .settings-card.collapsed {
   padding: 12px 16px;
 }
@@ -30,7 +29,7 @@
   gap: 8px;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #2d2438;
+  color: var(--color-text);
   overflow: hidden;
 }
 
@@ -38,14 +37,14 @@
   width: 18px;
   height: 18px;
   flex-shrink: 0;
-  color: #7c3aed;
+  color: var(--color-primary);
 }
 
 .settings-status {
   font-size: 0.8rem;
   font-weight: 400;
   font-style: normal;
-  color: #8b7faa;
+  color: var(--color-text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -55,7 +54,7 @@
   width: 20px;
   height: 20px;
   flex-shrink: 0;
-  color: #8b7faa;
+  color: var(--color-text-secondary);
   transition: transform 0.25s ease;
 }
 
@@ -80,30 +79,42 @@
 .settings-card input,
 .settings-card select {
   padding: 10px 12px;
-  border: 1px solid #d8cde8;
-  border-radius: 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
   font-size: 1rem;
 }
 
 .settings-card button {
   width: 100%;
   padding: 12px;
+  min-height: 44px;
   border: none;
-  border-radius: 10px;
-  background: #7c3aed;
+  border-radius: var(--radius-control);
+  background: var(--color-primary);
   color: #fff;
 }
 
-/* —— 聊天卡片 —— */
+/* —— 聊天卡片：撑满剩余高度 —— */
 .chat-card {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  min-height: 420px;
+}
+
+.chat-window {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--color-surface-soft);
+  border-radius: 12px;
+  padding: 12px;
 }
 
 /* —— 聊天输入区域 —— */
 .chat-input-area {
   margin-top: 10px;
+  flex-shrink: 0;
 }
 
 .linked-chips {
@@ -117,8 +128,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #ede8f7;
-  color: #7c3aed;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   border: 1px solid #c8b8e8;
   border-radius: 20px;
   padding: 4px 10px;
@@ -128,15 +139,14 @@
 .chip-remove {
   border: none;
   background: none;
-  color: #8b7faa;
+  color: var(--color-text-secondary);
   font-size: 0.85rem;
-  cursor: pointer;
   padding: 0;
   line-height: 1;
 }
 
 .chip-remove:hover {
-  color: #b42318;
+  color: var(--color-danger);
 }
 
 .chat-input-row {
@@ -151,8 +161,8 @@
 
 .input-wrapper textarea {
   width: 100%;
-  border: 1px solid #d8cde8;
-  border-radius: 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
   padding: 10px;
   resize: none;
   font-size: 1rem;
@@ -163,9 +173,9 @@
   bottom: 100%;
   left: 0;
   margin-bottom: 6px;
-  background: #fff;
-  border: 1px solid #e0d8f0;
-  border-radius: 10px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
   box-shadow: 0 4px 16px rgba(46, 36, 56, 0.15);
   max-height: 200px;
   overflow-y: auto;
@@ -179,33 +189,29 @@
   border: none;
   background: none;
   text-align: left;
-  padding: 8px 12px;
+  padding: 10px 12px;
   font-size: 0.9rem;
-  color: #2d2438;
-  cursor: pointer;
+  color: var(--color-text);
 }
 
 .date-picker-item:hover {
-  background: #f5f3fb;
+  background: var(--color-surface-soft);
 }
 
 .chat-input-row button {
   border: none;
-  border-radius: 10px;
-  background: #7c3aed;
+  border-radius: var(--radius-control);
+  background: var(--color-primary);
   color: #fff;
   padding: 0 16px;
+  min-height: 44px;
 }
 
-.chat-window {
-  flex: 1;
-  overflow: auto;
-  background: #f5f3fb;
-  border-radius: 12px;
-  padding: 12px;
-  max-height: 50vh;
+.chat-input-row button:disabled {
+  opacity: 0.6;
 }
 
+/* —— 消息气泡 —— */
 .bubble {
   margin-bottom: 10px;
   max-width: 88%;
@@ -225,27 +231,27 @@
 }
 
 .bubble.user p {
-  background: #7c3aed;
+  background: var(--color-primary);
   color: #fff;
 }
 
 .bubble.assistant p {
-  background: #fff;
-  border: 1px solid #e0d8f0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 
 .bubble .tag {
   display: inline-block;
   margin-top: 4px;
   font-size: 0.75rem;
-  color: #8b7faa;
+  color: var(--color-text-secondary);
 }
 
 .empty-tip, .loading, .msg {
-  color: #8b7faa;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
 }
 
 .msg.error {
-  color: #b42318;
+  color: var(--color-danger);
 }
