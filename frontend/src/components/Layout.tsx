@@ -30,7 +30,9 @@ export default function Layout({ children }: LayoutProps) {
   // 失焦（键盘收起）后恢复。焦点在输入框之间跳转时不闪烁。
   useEffect(() => {
     const isFormEl = (el: EventTarget | null) =>
-      el instanceof HTMLElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName)
+      el instanceof HTMLElement &&
+      ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName) &&
+      !el.dataset.copyHelper // 复制兜底的临时框不触发 Tab 栏隐藏
     const onFocusIn = (e: FocusEvent) => {
       if (isFormEl(e.target)) document.body.classList.add('hide-tabbar')
     }

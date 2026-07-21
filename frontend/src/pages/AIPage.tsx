@@ -5,7 +5,7 @@ import { useAIChat } from '../hooks/useAIChat'
 import AISettingsCard from '../components/AISettingsCard'
 import ChatWindow from '../components/ChatWindow'
 import DatePickerPopover from '../components/DatePickerPopover'
-import { exportChatImage } from '../utils/exportChatImage'
+import { renderChatImage } from '../utils/exportChatImage'
 import './AIPage.css'
 
 export default function AIPage() {
@@ -16,9 +16,10 @@ export default function AIPage() {
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [input, setInput] = useState('')
   const { messages, sending, send } = useAIChat()
-  // 对话导出：多选模式与选中的消息 id
+  // 对话导出：多选模式、选中的消息 id、生成的长图预览
   const [selectMode, setSelectMode] = useState(false)
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
+  const [exportImage, setExportImage] = useState<string | null>(null)
 
   const exportable = messages.filter((m) => !m.notice)
 
@@ -42,7 +43,7 @@ export default function AIPage() {
   const doExport = () => {
     const list = messages.filter((m) => selectedIds.has(m.id) && !m.notice)
     if (list.length === 0) return
-    exportChatImage(list)
+    setExportImage(renderChatImage(list))
     exitSelectMode()
   }
 
@@ -165,6 +166,26 @@ export default function AIPage() {
           </div>
         </div>
       </div>
+
+      {/* 长图预览：手机长按图片保存到相册，也可下载为文件 */}
+      {exportImage && (
+        <div className="export-backdrop" onClick={() => setExportImage(null)}>
+          <div className="export-modal" onClick={(e) => e.stopPropagation()}>
+            <p className="export-tip">✅ 长图已生成：手机<b>长按图片</b>即可保存到相册</p>
+            <div className="export-img-wrap">
+              <img src={exportImage} alt="对话长图" />
+            </div>
+            <div className="export-actions">
+              <a className="tool-btn primary" href={exportImage} download="运势Log对话长图.png">
+                下载 PNG
+              </a>
+              <button type="button" className="tool-btn" onClick={() => setExportImage(null)}>
+                关闭
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

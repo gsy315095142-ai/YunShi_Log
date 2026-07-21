@@ -36,9 +36,13 @@ export default function ChatWindow({ messages, sending, selectMode, selectedIds,
     try {
       await navigator.clipboard.writeText(m.content)
     } catch {
-      // 剪贴板 API 不可用（如 http 环境）时的兜底
+      // 剪贴板 API 不可用（如 http 环境）时的兜底：临时框放到屏幕外并打标记，
+      // 避免触发焦点监听导致底部 Tab 栏闪隐、页面跳动
       const ta = document.createElement('textarea')
       ta.value = m.content
+      ta.setAttribute('readonly', '')
+      ta.dataset.copyHelper = '1'
+      ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;'
       document.body.appendChild(ta)
       ta.select()
       document.execCommand('copy')

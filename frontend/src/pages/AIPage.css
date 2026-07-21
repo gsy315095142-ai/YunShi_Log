@@ -36,6 +36,7 @@
   font-size: 0.8rem;
   padding: 6px 14px;
   min-height: 34px;
+  white-space: nowrap;
   transition: border-color 0.2s ease, color 0.2s ease;
 }
 
@@ -337,6 +338,11 @@
   flex-shrink: 0;
   font-size: 0.72rem;
   opacity: 0.7;
+  white-space: nowrap;
+}
+
+.thinking-status {
+  white-space: nowrap;
 }
 
 /* 展开后的思考正文：独立内边距 + 顶部虚线分隔，长文本完整换行显示 */
@@ -375,6 +381,7 @@
   margin-top: 4px;
   font-size: 0.75rem;
   color: var(--color-text-secondary);
+  white-space: nowrap;
 }
 
 /* AI 修改每日记录的操作回执 */
@@ -415,6 +422,8 @@
   align-items: center;
   gap: 8px;
   padding: 4px 4px 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
 }
 
 .chat-tools.selecting {
@@ -425,6 +434,8 @@
   margin-right: auto;
   font-size: 0.85rem;
   color: var(--color-text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .tool-btn {
@@ -434,6 +445,8 @@
   background: var(--color-surface);
   color: var(--color-text-label);
   font-size: 0.82rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .tool-btn.primary {
@@ -457,6 +470,7 @@
   background: var(--color-surface);
   color: var(--color-text-secondary);
   font-size: 0.75rem;
+  white-space: nowrap;
 }
 
 .bubble.user .copy-btn {
@@ -514,4 +528,57 @@
 
 .msg.error {
   color: var(--color-danger);
+}
+
+/* —— 长图预览弹窗 —— */
+.export-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 10, 26, 0.55);
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.export-modal {
+  width: 100%;
+  max-width: 420px;
+  max-height: 88dvh;
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.export-tip {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-label);
+  text-align: center;
+}
+
+.export-img-wrap {
+  min-height: 0;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.export-img-wrap img {
+  display: block;
+  width: 100%;
+}
+
+.export-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.export-actions .tool-btn {
+  text-decoration: none;
 }

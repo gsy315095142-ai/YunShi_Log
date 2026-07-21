@@ -2,6 +2,7 @@
  * 对话导出为 PNG 长图。
  * 纯 Canvas 手绘（不引入 html2canvas 依赖）：两趟渲染——先量高、再绘制。
  * 只导出对话正文与回执标签，不包含思考过程。
+ * 返回 dataURL，由页面弹预览：手机长按存相册，也可点按钮下载。
  */
 import type { ChatMessage } from '../api/ai'
 
@@ -73,7 +74,7 @@ function fmtActionDate(iso: string) {
   return `${Number(m)}月${Number(d)}日`
 }
 
-export function exportChatImage(messages: ChatMessage[]): void {
+export function renderChatImage(messages: ChatMessage[]): string {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')!
   ctx.font = FONT
@@ -190,15 +191,5 @@ export function exportChatImage(messages: ChatMessage[]): void {
   ctx.textAlign = 'center'
   ctx.fillText('—— 由 运势 Log 导出 ——', W / 2, y + 20)
 
-  // 下载
-  const stamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`
-  canvas.toBlob((blob) => {
-    if (!blob) return
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `运势Log对话-${stamp}.png`
-    a.click()
-    URL.revokeObjectURL(url)
-  }, 'image/png')
+  return canvas.toDataURL('image/png')
 }
