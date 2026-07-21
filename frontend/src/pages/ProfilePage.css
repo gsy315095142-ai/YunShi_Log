@@ -35,6 +35,11 @@
   min-width: 0;
 }
 
+/* 年份是 4 位数字（+下拉箭头）需要更宽；月/日只有两位数，可以窄一些 */
+.dt-row select[aria-label='年'] {
+  flex: 1.6;
+}
+
 .profile-page form.card button {
   width: 100%;
   padding: 12px;
