@@ -53,6 +53,26 @@ deactivate
 
 ## 二、前端更新
 
+### 首选：服务器直接构建（2026-07-21 起）
+
+服务器已装 Node v24 + npm 11，并已完成首次 `npm install`（registry 已设国内镜像 npmmirror）。
+本地 `git push` 之后，在**宝塔网页终端**执行：
+
+```bash
+cd /www/server/su-yunshi-log && git pull
+```
+
+```bash
+bash scripts/deploy-frontend.sh
+```
+
+脚本会自动 `npm run build` 并把 `dist/` 同步到 `/www/wwwroot/lumiclaw.top/sylog/`（rsync --delete，无 rsync 时先清后拷）。
+纯静态文件，同步即生效，**不需要重启任何服务**；用户刷新页面即可看到新版。
+
+> 依赖有变化时（package.json 改了）才需要在 `frontend/` 目录补一次 `npm install`。
+
+### 备选：本地打包上传
+
 本地项目根目录执行 `build-frontend.bat`（或 `cd frontend && npm run build`），
 把 `frontend/dist/` **里面的所有文件**上传覆盖到服务器：
 
