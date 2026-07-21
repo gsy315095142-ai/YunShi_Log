@@ -8,6 +8,11 @@ class AISettingsUpdateRequest(BaseModel):
     api_key: str | None = None
     api_base_url: str | None = None
     model: str | None = None
+    fallback_provider: str | None = Field(default=None, pattern="^(deepseek|zhipu)$")
+    fallback_api_key: str | None = None
+    fallback_api_base_url: str | None = None
+    fallback_model: str | None = None
+    clear_fallback: bool = False
 
 
 class AISettingsResponse(BaseModel):
@@ -15,6 +20,10 @@ class AISettingsResponse(BaseModel):
     api_base_url: str
     api_key_masked: str | None
     model: str
+    fallback_provider: str | None = None
+    fallback_api_base_url: str | None = None
+    fallback_api_key_masked: str | None = None
+    fallback_model: str | None = None
 
 
 class ChatRequest(BaseModel):
@@ -38,6 +47,7 @@ class ChatMessageItem(BaseModel):
     linked_date: date | None
     created_at: str
     record_actions: list[RecordAction] | None = None
+    used_fallback: bool | None = None  # 本条回复是否由备用厂商接手生成
 
     model_config = {"from_attributes": True}
 

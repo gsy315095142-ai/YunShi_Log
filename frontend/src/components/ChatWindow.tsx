@@ -36,6 +36,7 @@ export default function ChatWindow({ messages, sending }: ChatWindowProps) {
               ✏️ 已{a.action === 'created' ? '新增' : '更新'} {fmtActionDate(a.date)} 的记录
             </span>
           ))}
+          {m.used_fallback && <span className="tag fallback-tag">🔄 已由备用模型接手</span>}
           {m.linked_date && <span className="tag">📅 {m.linked_date}</span>}
         </div>
       ))}

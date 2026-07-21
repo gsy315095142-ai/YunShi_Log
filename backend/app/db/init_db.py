@@ -16,6 +16,10 @@ _COLUMN_MIGRATIONS = [
     ("ai_chat_messages", "reasoning", "TEXT"),
     ("ai_chat_messages", "record_actions", "TEXT"),
     ("ai_settings", "model", "VARCHAR(64)"),
+    ("ai_settings", "fallback_provider", "VARCHAR(32)"),
+    ("ai_settings", "fallback_api_key_encrypted", "TEXT"),
+    ("ai_settings", "fallback_api_base_url", "VARCHAR(255)"),
+    ("ai_settings", "fallback_model", "VARCHAR(64)"),
 ]
 
 

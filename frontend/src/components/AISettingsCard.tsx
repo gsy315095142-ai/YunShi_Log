@@ -14,6 +14,10 @@ export default function AISettingsCard() {
   const [apiKey, setApiKey] = useState('')
   const [apiKeyMasked, setApiKeyMasked] = useState<string | null>(null)
   const [model, setModel] = useState('')
+  const [fallbackProvider, setFallbackProvider] = useState('')
+  const [fallbackModel, setFallbackModel] = useState('')
+  const [fallbackApiKey, setFallbackApiKey] = useState('')
+  const [fallbackApiKeyMasked, setFallbackApiKeyMasked] = useState<string | null>(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [settingsMsg, setSettingsMsg] = useState('')
 
@@ -24,11 +28,16 @@ export default function AISettingsCard() {
       setApiBaseUrl(s.api_base_url)
       setApiKeyMasked(s.api_key_masked)
       setModel(s.model)
+      setFallbackProvider(s.fallback_provider ?? '')
+      setFallbackModel(s.fallback_model ?? '')
+      setFallbackApiKeyMasked(s.fallback_api_key_masked)
     })
   }, [])
 
   const currentProvider = providers.find((p) => p.id === provider)
   const modelOptions = currentProvider?.models ?? []
+  const fallbackProviderInfo = providers.find((p) => p.id === fallbackProvider)
+  const fallbackModelOptions = fallbackProviderInfo?.models ?? []
 
   const onProviderChange = (value: string) => {
     setProvider(value)
@@ -39,6 +48,12 @@ export default function AISettingsCard() {
     }
   }
 
+  const onFallbackProviderChange = (value: string) => {
+    setFallbackProvider(value)
+    const found = providers.find((p) => p.id === value)
+    setFallbackModel(found?.default_model ?? '')
+  }
+
   const saveSettings = async () => {
     setSettingsMsg('')
     try {
@@ -47,9 +62,18 @@ export default function AISettingsCard() {
         api_base_url: apiBaseUrl,
         api_key: apiKey || undefined,
         model,
+        ...(fallbackProvider
+          ? {
+              fallback_provider: fallbackProvider,
+              fallback_model: fallbackModel || undefined,
+              fallback_api_key: fallbackApiKey || undefined,
+            }
+          : { clear_fallback: true }),
       })
       setApiKeyMasked(saved.api_key_masked)
       setApiKey('')
+      setFallbackApiKeyMasked(saved.fallback_api_key_masked)
+      setFallbackApiKey('')
       setSettingsMsg('AI 配置已保存')
     } catch (err) {
       setSettingsMsg(err instanceof ApiError ? err.message : '保存失败')
@@ -57,9 +81,10 @@ export default function AISettingsCard() {
   }
 
   const providerName = currentProvider?.name ?? provider
-  const settingsSummary = apiKeyMasked
-    ? `${providerName} · ${model} · ${apiKeyMasked}`
-    : `${providerName} · 未配置 API Key`
+  const fallbackName = fallbackProviderInfo?.name ?? ''
+  const settingsSummary = `${
+    apiKeyMasked ? `${providerName} · ${model} · ${apiKeyMasked}` : `${providerName} · 未配置 API Key`
+  }${fallbackProvider && fallbackName ? `（备用：${fallbackName}）` : ''}`
 
   return (
     <>
@@ -126,6 +151,43 @@ export default function AISettingsCard() {
                   placeholder="输入新的 API Key"
                 />
               </label>
+
+              <div className="settings-divider">备用厂商（主厂商无响应时自动接手，可选）</div>
+              <label>
+                备用厂商
+                <select value={fallbackProvider} onChange={(e) => onFallbackProviderChange(e.target.value)}>
+                  <option value="">不启用</option>
+                  {providers.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {fallbackProvider && (
+                <>
+                  <label>
+                    备用模型
+                    <select value={fallbackModel} onChange={(e) => setFallbackModel(e.target.value)}>
+                      {fallbackModelOptions.map((m) => (
+                        <option key={m} value={m}>
+                          {m}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    备用 API Key {fallbackApiKeyMasked ? `（已配置 ${fallbackApiKeyMasked}）` : ''}
+                    <input
+                      type="password"
+                      value={fallbackApiKey}
+                      onChange={(e) => setFallbackApiKey(e.target.value)}
+                      placeholder="输入备用厂商的 API Key"
+                    />
+                  </label>
+                </>
+              )}
+
               <button type="button" className="settings-save" onClick={saveSettings}>
                 保存配置
               </button>

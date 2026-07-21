@@ -65,6 +65,11 @@ class AISettings(Base):
     api_key_encrypted: Mapped[str | None] = mapped_column(Text, nullable=True)
     api_base_url: Mapped[str | None] = mapped_column(String(255), nullable=True)
     model: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # 备用厂商（主厂商调用失败时自动接管，无需用户重发）
+    fallback_provider: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    fallback_api_key_encrypted: Mapped[str | None] = mapped_column(Text, nullable=True)
+    fallback_api_base_url: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    fallback_model: Mapped[str | None] = mapped_column(String(64), nullable=True)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now(), onupdate=func.now()
     )

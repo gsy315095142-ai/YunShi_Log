@@ -13,6 +13,10 @@ export interface AISettings {
   api_base_url: string
   api_key_masked: string | null
   model: string
+  fallback_provider: string | null
+  fallback_api_base_url: string | null
+  fallback_api_key_masked: string | null
+  fallback_model: string | null
 }
 
 export interface RecordAction {
@@ -29,6 +33,8 @@ export interface ChatMessage {
   linked_date: string | null
   created_at: string
   record_actions?: RecordAction[] | null
+  /** 本条回复是否由备用厂商接手生成（仅即时响应带回，历史消息无此字段） */
+  used_fallback?: boolean | null
   /** 前端本地提示气泡（如未配置 API Key），不入库、不显示思考框 */
   notice?: boolean
 }
@@ -46,6 +52,10 @@ export async function saveAISettings(body: {
   api_key?: string
   api_base_url?: string
   model?: string
+  fallback_provider?: string | null
+  fallback_api_key?: string
+  fallback_model?: string
+  clear_fallback?: boolean
 }) {
   return apiFetch<AISettings>('/api/v1/ai/settings', {
     method: 'PUT',

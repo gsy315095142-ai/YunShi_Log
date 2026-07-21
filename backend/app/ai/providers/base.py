@@ -15,7 +15,7 @@ PROVIDER_DEFAULTS: dict[str, ProviderDefaults] = {
         id="deepseek",
         name="DeepSeek",
         default_base_url="https://api.deepseek.com",
-        default_model="deepseek-v4-flash",
+        default_model="deepseek-v4-pro",
         models=["deepseek-v4-pro", "deepseek-v4-flash"],
     ),
     "zhipu": ProviderDefaults(
