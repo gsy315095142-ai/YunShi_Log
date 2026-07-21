@@ -277,38 +277,81 @@
   border: 1px solid var(--color-border);
 }
 
-/* —— 思考内容框：与发言气泡区分 —— */
+/* —— 思考内容框：与发言气泡区分，默认收起 —— */
 .thinking-box {
   margin-bottom: 6px;
-  padding: 8px 12px;
   border: 1px dashed var(--color-border-strong);
   border-radius: 12px;
   background: var(--color-surface-soft);
+  overflow: hidden;
 }
 
-.thinking-box .thinking-label {
-  display: block;
-  font-size: 0.7rem;
-  color: var(--color-text-secondary);
-  margin-bottom: 4px;
-  letter-spacing: 0.05em;
-}
-
-.thinking-box p {
+/* 收起条：整行可点击 */
+.thinking-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
   margin: 0;
-  padding: 0;
+  padding: 8px 12px;
   border: none;
   background: none;
-  font-size: 0.8rem;
-  line-height: 1.6;
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  text-align: left;
+}
+
+.thinking-bar:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+/* 静态条（无思考内容 / 思考中占位）不可点击 */
+.thinking-bar.static {
+  cursor: default;
+}
+
+.thinking-bar.static:hover {
+  background: none;
+}
+
+.thinking-chevron {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  opacity: 0.7;
+}
+
+/* 展开后的思考正文：独立内边距 + 顶部虚线分隔，长文本完整换行显示 */
+.bubble .thinking-box .thinking-content {
+  margin: 0;
+  padding: 10px 12px 12px;
+  border: none;
+  border-top: 1px dashed var(--color-border);
+  border-radius: 0;
+  background: none;
+  font-size: 0.85rem;
+  line-height: 1.75;
   color: var(--color-text-secondary);
   white-space: pre-wrap;
   word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
-.thinking-box.empty p {
+.thinking-box.empty .thinking-status {
   font-style: italic;
   opacity: 0.75;
+}
+
+/* 思考中状态：轻微呼吸动画 */
+.thinking-pulse {
+  animation: thinking-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes thinking-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
 }
 
 .bubble .tag {

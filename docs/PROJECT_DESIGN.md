@@ -605,6 +605,7 @@ users 1 ── * ai_chat_messages
 | 2026-07-20 | **阿里云上线**：git 克隆部署（Deploy Keys）+ venv（/usr/bin/python3.11）+ Supervisor 守护 + nginx 反代 + 前端 dist 上传；`run-prod.sh` 自动加载 .env 并使用 venv uvicorn；踩坑记录：root/admin 双用户密钥、运行用户与文件属主需一致 |
 | 2026-07-21 | 登录页修改密码（`POST /auth/change-password`）；新增默认账号 suyan（种子改为按需补齐）；智谱默认端点改为套餐专属（`/api/coding/paas/v4`）；首页按资料完整度智能跳转；错误提示改聊天气泡；生日/时间改独立下拉；键盘弹出自动隐藏 Tab 栏；修复 auth/service.py 漏导入导致的启动 NameError（教训：后端改动必跑 `from app.main import app` 冒烟）；发版 v0.1.26072101 |
 | 2026-07-21 | 主备双厂商：`ai_settings` 加 `fallback_*` 四列；聊天优先主厂商、失败自动切备用厂商接手（同上下文续答，无需用户重发）；接手回复带「🔄 已由备用模型接手」标签（不落库）；DeepSeek 默认模型改 `deepseek-v4-pro`；配置弹窗新增备用厂商区 |
+| 2026-07-21 | 思考框默认收起为可点击状态条（思考中"AI大师正在掐指一算"、完成"AI大师已然心里有数"），点击展开正文；修复思考正文被气泡样式覆盖导致的排版/显示不全问题（选择器优先级）；前端打包命名约定统一 `dist-sylog.zip`（见 UPDATE_RUNBOOK） |
 
 ---
 
