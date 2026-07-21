@@ -1,7 +1,13 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.auth.schemas import LoginRequest, RegisterRequest, TokenResponse, UserResponse
+from app.auth.schemas import (
+    ChangePasswordRequest,
+    LoginRequest,
+    RegisterRequest,
+    TokenResponse,
+    UserResponse,
+)
 from app.auth.security import create_access_token, hash_password, verify_password
 from app.db.models import User
 
