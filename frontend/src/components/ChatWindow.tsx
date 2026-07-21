@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ChatMessage } from '../api/ai'
+import './ChatWindow.css'
 
 interface ChatWindowProps {
   messages: ChatMessage[]

@@ -1,0 +1,160 @@
+/* —— 配置入口栏（按钮 + 当前配置摘要） —— */
+.settings-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.settings-status {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.settings-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 20px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  min-height: 34px;
+  white-space: nowrap;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.settings-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* 紧跟摘要文字的紧凑版按钮（AI 配置） */
+.settings-btn.compact {
+  padding: 4px 10px;
+  min-height: 28px;
+  font-size: 0.75rem;
+}
+
+/* 配置栏右侧操作位（对话导出等），推到行尾 */
+.settings-actions {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-icon {
+  width: 15px;
+  height: 15px;
+}
+
+/* —— 配置弹窗 —— */
+.settings-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 10, 26, 0.45);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.settings-modal {
+  width: 100%;
+  max-width: 400px;
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  padding: 18px 16px;
+  box-shadow: 0 8px 32px rgba(46, 36, 56, 0.25);
+  max-height: 85dvh;
+  overflow-y: auto;
+}
+
+.settings-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.settings-modal-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--color-text);
+}
+
+.settings-close {
+  border: none;
+  background: var(--color-primary-soft);
+  color: var(--color-text-secondary);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  transition: background 0.2s ease;
+}
+
+.settings-close:hover {
+  background: #ddd5f0;
+}
+
+.settings-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-modal label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.settings-modal input,
+.settings-modal select {
+  padding: 10px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  font-size: 1rem;
+}
+
+.settings-save {
+  width: 100%;
+  padding: 12px;
+  min-height: 44px;
+  border: none;
+  border-radius: var(--radius-control);
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* 配置弹窗内的分区标题 */
+.settings-divider {
+  margin: 4px 0 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--color-border);
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+/* 配置保存结果提示（与 .empty-tip/.loading 同款，随设置卡自留一份） */
+.msg {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.msg.error {
+  color: var(--color-danger);
+}

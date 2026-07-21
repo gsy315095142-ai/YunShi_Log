@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import type { RecordItem } from '../api/records'
+import ConfirmDialog from './ConfirmDialog'
+import IconButton, { DeleteIcon, EditIcon } from './IconButton'
+import './DaySheet.css'
 
 interface DaySheetProps {
   selectedDate: string
@@ -88,24 +91,12 @@ export default function DaySheet({
                 <li key={item.id}>
                   <p>{item.content}</p>
                   <div className="item-actions">
-                    <button
-                      type="button"
-                      className="icon-btn"
-                      aria-label="编辑"
-                      title="编辑"
-                      onClick={() => onStartEdit(item)}
-                    >
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /></svg>
-                    </button>
-                    <button
-                      type="button"
-                      className="icon-btn danger"
-                      aria-label="删除"
-                      title="删除"
-                      onClick={() => onRequestDelete(item.id)}
-                    >
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /></svg>
-                    </button>
+                    <IconButton label="编辑" onClick={() => onStartEdit(item)}>
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton label="删除" danger onClick={() => onRequestDelete(item.id)}>
+                      <DeleteIcon />
+                    </IconButton>
                   </div>
                 </li>
               )
@@ -130,27 +121,15 @@ export default function DaySheet({
         )}
       </div>
 
-      {confirmingItem && (
-        <div className="confirm-backdrop" onClick={onCancelDelete}>
-          <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
-            <h4>删除这条记录？</h4>
-            <p className="confirm-content">{confirmingItem.content}</p>
-            <p className="confirm-tip">删除后不可恢复</p>
-            <div className="confirm-actions">
-              <button type="button" className="cancel-btn" onClick={onCancelDelete}>
-                取消
-              </button>
-              <button
-                type="button"
-                className="danger-btn"
-                onClick={() => onRemove(confirmingItem.id)}
-              >
-                确认删除
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        open={confirmingItem !== undefined}
+        title="删除这条记录？"
+        content={confirmingItem?.content}
+        tip="删除后不可恢复"
+        confirmText="确认删除"
+        onConfirm={() => confirmingItem && onRemove(confirmingItem.id)}
+        onCancel={onCancelDelete}
+      />
     </div>
   )
 }

@@ -1,0 +1,159 @@
+/* —— 月份切换 —— */
+.calendar-card .month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.calendar-card .month-nav button {
+  border: none;
+  background: var(--color-primary-soft);
+  color: var(--color-text);
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-control);
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.calendar-card .month-nav button:hover {
+  background: #ddd5f0;
+}
+
+.calendar-card .month-nav button:active {
+  transform: scale(0.92);
+}
+
+/* —— 日历格子 —— */
+.weekday-row,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.weekday-row span {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  padding: 4px 0;
+}
+
+.weekday-row span.weekend {
+  color: var(--color-weekend);
+}
+
+.cell {
+  border-radius: var(--radius-control);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.cell.empty {
+  border: none;
+  background: transparent;
+}
+
+.cell.day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1px;
+  aspect-ratio: 1; /* 正方形格子：宽度即高度，告别长条 */
+  height: auto;
+  overflow: hidden;
+  padding: 3px 4px;
+  text-align: left;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.cell.day:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46, 36, 56, 0.12);
+  border-color: #c8b8e8;
+}
+
+.cell.day.has-record {
+  background: var(--color-primary-faint);
+  border-left: 3px solid #9b6de0;
+}
+
+.cell.day.has-record .day-num {
+  font-weight: 600;
+}
+
+.cell.day.today {
+  background: linear-gradient(135deg, #f5f0ff 0%, #ede4ff 100%);
+  border-color: var(--color-primary-light);
+}
+
+.cell.day.today .day-num {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* 今天标记：右上角小点，避开摘要区 */
+.cell.day.today::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-primary-light);
+}
+
+.cell.day.weekend .day-num {
+  color: var(--color-weekend);
+}
+
+.cell.day.weekend.today .day-num,
+.cell.day.weekend.has-record .day-num {
+  color: var(--color-primary);
+}
+
+.cell.day.selected {
+  box-shadow: 0 0 0 2px var(--color-primary), 0 4px 12px rgba(124, 58, 237, 0.2);
+  border-color: var(--color-primary);
+}
+
+.cell.day.selected:hover {
+  transform: none;
+}
+
+.day-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px;
+}
+
+.day-num {
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+.count-badge {
+  font-size: 0.55rem;
+  line-height: 1;
+  color: #fff;
+  background: var(--color-primary-light);
+  border-radius: 8px;
+  padding: 2px 4px;
+  margin-right: 8px; /* 避开今天小点 */
+}
+
+.cell.day:not(.today) .count-badge {
+  margin-right: 0;
+}
+
+.preview {
+  font-size: 0.58rem;
+  color: var(--color-text-secondary);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

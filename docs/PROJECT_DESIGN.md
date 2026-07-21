@@ -611,6 +611,7 @@ users 1 ── * ai_chat_messages
 | 2026-07-21 | 系统提示词加「语言铁律」：思考过程与正式回复全程简体中文（模型思考易蹦英文，尤其 DeepSeek） |
 | 2026-07-21 | 对话复制与导出：气泡加「📋 复制」按钮（仅正文，不含思考，http 环境 execCommand 兜底）；新增「对话导出」多选模式，Canvas 手绘 PNG 长图（`utils/exportChatImage.ts`，2x 清晰度，含角色名/回执标签/导出日期，无新依赖）；生日年份下拉加宽；AI 输入框占位文案精简 |
 | 2026-07-21 | 修复：复制兜底临时框触发焦点监听致 Tab 栏闪隐（移出屏幕+标记跳过）；长图 download 只进下载目录不进系统相册 → 改为弹窗预览、手机长按存相册；配置栏摘要不再显示脱敏 Key、对话导出收入栏内；全站按钮统一 `white-space:nowrap` 杜绝莫名换行 |
+| 2026-07-21 | 结构重构（零功能变化）：DailyPage.css(612行)/AIPage.css(584行) 按组件拆分为 CalendarGrid/DaySheet/TodayCard/ConfirmDialog/AISettingsCard/ChatWindow/DatePickerPopover 各自 CSS，页面 CSS 只留布局与自有 JSX 样式；抽通用 `ConfirmDialog`（open/title/content/tip/danger/onConfirm/onCancel）与 `IconButton`(EditIcon/DeleteIcon)，消除 DaySheet/TodayCard 的确认弹窗与图标重复块 |
 
 ---
 

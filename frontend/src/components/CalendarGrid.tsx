@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import type { DaySummary } from '../api/records'
+import './CalendarGrid.css'
 
 const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六']
 

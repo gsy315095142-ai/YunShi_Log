@@ -1,0 +1,146 @@
+/* —— 今日卡片 —— */
+.today-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.today-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid var(--color-border);
+}
+
+.today-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.today-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  color: #fff;
+  background: var(--color-primary);
+  border-radius: 6px;
+  padding: 2px 8px;
+  letter-spacing: 0.1em;
+}
+
+.today-date {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.today-lunar {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-left: auto;
+}
+
+/* 内容下方的操作行：编辑/删除图标右对齐，不挤占日期行 */
+.today-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  border-top: 1px solid var(--color-border);
+  padding-top: 6px;
+}
+
+.today-actions-row .icon-btn {
+  width: 30px;
+  height: 30px;
+}
+
+.today-body {
+  border-top: 1px solid var(--color-border);
+  padding-top: 10px;
+}
+
+.today-content {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.today-empty {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+/* —— 卡片内编辑器（新增/编辑共用） —— */
+.today-editor textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  padding: 10px;
+  font-size: 0.95rem;
+  resize: vertical;
+  margin-bottom: 8px;
+}
+
+.today-editor-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.today-editor-actions .submit-btn {
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 8px 18px;
+  min-height: 36px;
+  border-radius: 8px;
+}
+
+.today-editor-actions .submit-btn:disabled {
+  opacity: 0.5;
+}
+
+.today-editor-actions .cancel-btn {
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  padding: 8px 18px;
+  min-height: 36px;
+  border-radius: 8px;
+}
+
+.today-error {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  color: var(--color-danger);
+}
+
+/* —— 测算今日运势入口 —— */
+.today-fortune-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px;
+  border: 1px dashed var(--color-primary-light);
+  border-radius: var(--radius-control);
+  background: var(--color-primary-faint);
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.today-fortune-btn:hover {
+  background: #ece4fb;
+}

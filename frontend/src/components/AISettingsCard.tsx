@@ -6,6 +6,7 @@ import {
   type AIProvider,
 } from '../api/ai'
 import { ApiError } from '../api/client'
+import './AISettingsCard.css'
 
 interface AISettingsCardProps {
   /** 配置栏右侧操作位（如「对话导出」按钮） */

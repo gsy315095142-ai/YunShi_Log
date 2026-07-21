@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import type { TodayInfo } from '../api/records'
+import ConfirmDialog from './ConfirmDialog'
+import IconButton, { DeleteIcon, EditIcon } from './IconButton'
+import './TodayCard.css'
 
 const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六']
 
@@ -108,38 +111,24 @@ export default function TodayCard({ info, onCreate, onUpdate, onDelete, onFortun
 
         {hasRecord && !editing && (
           <div className="today-actions-row">
-            <button type="button" className="icon-btn" aria-label="编辑" title="编辑" onClick={startEdit}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /></svg>
-            </button>
-            <button
-              type="button"
-              className="icon-btn danger"
-              aria-label="删除"
-              title="删除"
-              onClick={() => setConfirming(true)}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /></svg>
-            </button>
+            <IconButton label="编辑" onClick={startEdit}>
+              <EditIcon />
+            </IconButton>
+            <IconButton label="删除" danger onClick={() => setConfirming(true)}>
+              <DeleteIcon />
+            </IconButton>
           </div>
         )}
 
-        {confirming && hasRecord && (
-          <div className="confirm-backdrop" onClick={() => setConfirming(false)}>
-            <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
-              <h4>删除今天的记录？</h4>
-              <p className="confirm-content">{info.content}</p>
-              <p className="confirm-tip">删除后不可恢复</p>
-              <div className="confirm-actions">
-                <button type="button" className="cancel-btn" onClick={() => setConfirming(false)}>
-                  取消
-                </button>
-                <button type="button" className="danger-btn" onClick={remove}>
-                  确认删除
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <ConfirmDialog
+          open={confirming && hasRecord}
+          title="删除今天的记录？"
+          content={info.content ?? ''}
+          tip="删除后不可恢复"
+          confirmText="确认删除"
+          onConfirm={remove}
+          onCancel={() => setConfirming(false)}
+        />
       </div>
 
       {!editing && (

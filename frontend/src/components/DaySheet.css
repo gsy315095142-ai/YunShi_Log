@@ -1,0 +1,236 @@
+/* —— 底部弹出层（bottom sheet） —— */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 10, 26, 0.45);
+  z-index: 60;
+  animation: sheet-fade 0.2s ease;
+}
+
+@keyframes sheet-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.day-sheet {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: 100%;
+  max-width: 480px;
+  max-height: 78dvh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px 18px 0 0;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 32px rgba(46, 36, 56, 0.2);
+  animation: sheet-rise 0.25s ease;
+}
+
+@keyframes sheet-rise {
+  from {
+    transform: translate(-50%, 24px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.sheet-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.sheet-close {
+  border: none;
+  background: var(--color-primary-soft);
+  color: var(--color-text-secondary);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  transition: background 0.2s ease;
+}
+
+.sheet-close:hover {
+  background: #ddd5f0;
+}
+
+.sheet-body {
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.record-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.record-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  padding: 10px;
+  margin-bottom: 8px;
+}
+
+.record-list li.editing {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.12);
+}
+
+.record-list p {
+  flex: 1;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* —— 条目右侧图标按钮 —— */
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.icon-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.icon-btn:hover {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.icon-btn.danger:hover {
+  background: #fdecea;
+  color: var(--color-danger);
+}
+
+.icon-btn.danger.confirming {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+/* —— 条目内联编辑 —— */
+.inline-editor {
+  flex: 1;
+}
+
+.inline-editor textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  padding: 8px 10px;
+  font-size: 0.95rem;
+  resize: vertical;
+  margin-bottom: 8px;
+}
+
+.inline-editor-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.inline-editor-actions .submit-btn {
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 8px 18px;
+  min-height: 36px;
+  border-radius: 8px;
+}
+
+.inline-editor-actions .cancel-btn {
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  padding: 8px 18px;
+  min-height: 36px;
+  border-radius: 8px;
+}
+
+/* —— 编辑器 —— */
+.sheet-editor {
+  border-top: 1px solid var(--color-border);
+  padding-top: 12px;
+}
+
+.sheet-editor textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.editor-actions .submit-btn {
+  flex: 1;
+  padding: 12px;
+  min-height: 44px;
+  border: none;
+  border-radius: var(--radius-control);
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.editor-actions .cancel-btn {
+  padding: 12px 18px;
+  min-height: 44px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+}
+
+.empty-tip, .loading, .msg {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.sheet-msg {
+  margin: 4px 0 0;
+  text-align: center;
+}

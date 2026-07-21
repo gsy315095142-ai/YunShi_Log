@@ -1,0 +1,30 @@
+/* —— @ 日期选择弹层 —— */
+.date-picker-popover {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 6px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  box-shadow: 0 4px 16px rgba(46, 36, 56, 0.15);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10;
+  min-width: 160px;
+}
+
+.date-picker-item {
+  display: block;
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.date-picker-item:hover {
+  background: var(--color-surface-soft);
+}
