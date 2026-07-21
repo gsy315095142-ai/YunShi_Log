@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from app.ai.chat_service import list_chat_history, send_chat
+from app.ai.chat_repository import list_chat_history
+from app.ai.chat_service import send_chat
 from app.ai.schemas import (
     AISettingsResponse,
     AISettingsUpdateRequest,

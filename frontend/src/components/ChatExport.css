@@ -1,0 +1,99 @@
+/* —— 对话导出样式：多选工具条（ChatExportBar）+ 长图预览弹窗（ExportPreviewModal）—— */
+/* 本文件由 ChatExportBar.tsx 引入；ExportPreviewModal 共用这份 CSS，不再重复 import */
+
+/* —— 对话工具栏（导出） —— */
+.chat-tools {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 4px 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.chat-tools.selecting {
+  justify-content: flex-start;
+}
+
+.select-count {
+  margin-right: auto;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tool-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text-label);
+  font-size: 0.82rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tool-btn.primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.tool-btn:disabled {
+  opacity: 0.45;
+}
+
+/* —— 长图预览弹窗 —— */
+.export-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 10, 26, 0.55);
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.export-modal {
+  width: 100%;
+  max-width: 420px;
+  max-height: 88dvh;
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.export-tip {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-label);
+  text-align: center;
+}
+
+.export-img-wrap {
+  min-height: 0;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.export-img-wrap img {
+  display: block;
+  width: 100%;
+}
+
+.export-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.export-actions .tool-btn {
+  text-decoration: none;
+}

@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { fetchMonthRecords } from '../api/records'
 import { useAIChat } from '../hooks/useAIChat'
+import { useChatExport } from '../hooks/useChatExport'
 import AISettingsCard from '../components/AISettingsCard'
+import ChatExportBar from '../components/ChatExportBar'
 import ChatWindow from '../components/ChatWindow'
 import DatePickerPopover from '../components/DatePickerPopover'
-import { renderChatImage } from '../utils/exportChatImage'
+import ExportPreviewModal from '../components/ExportPreviewModal'
 import './AIPage.css'
 
 export default function AIPage() {
@@ -16,36 +18,7 @@ export default function AIPage() {
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [input, setInput] = useState('')
   const { messages, sending, send } = useAIChat()
-  // 对话导出：多选模式、选中的消息 id、生成的长图预览
-  const [selectMode, setSelectMode] = useState(false)
-  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
-  const [exportImage, setExportImage] = useState<string | null>(null)
-
-  const exportable = messages.filter((m) => !m.notice)
-
-  const toggleSelect = (id: number) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
-      return next
-    })
-  }
-
-  const exitSelectMode = () => {
-    setSelectMode(false)
-    setSelectedIds(new Set())
-  }
-
-  const doExport = () => {
-    const list = messages.filter((m) => selectedIds.has(m.id) && !m.notice)
-    if (list.length === 0) return
-    setExportImage(renderChatImage(list))
-    exitSelectMode()
-  }
+  const chatExport = useChatExport(messages)
 
   useEffect(() => {
     const now = new Date()
@@ -99,8 +72,8 @@ export default function AIPage() {
           <button
             type="button"
             className="settings-btn"
-            disabled={exportable.length === 0}
-            onClick={() => setSelectMode(true)}
+            disabled={chatExport.exportable.length === 0}
+            onClick={chatExport.enterSelectMode}
             title="选择对话导出为长图"
           >
             🖼 对话导出
@@ -109,35 +82,21 @@ export default function AIPage() {
       />
 
       <div className="card chat-card">
-        {selectMode && (
-          <div className="chat-tools selecting">
-            <span className="select-count">已选 {selectedIds.size} 条</span>
-            <button
-              type="button"
-              className="tool-btn"
-              onClick={() => setSelectedIds(new Set(exportable.map((m) => m.id)))}
-            >
-              全选
-            </button>
-            <button type="button" className="tool-btn" onClick={exitSelectMode}>
-              取消
-            </button>
-            <button
-              type="button"
-              className="tool-btn primary"
-              disabled={selectedIds.size === 0}
-              onClick={doExport}
-            >
-              🖼 导出 PNG
-            </button>
-          </div>
+        {chatExport.selectMode && (
+          <ChatExportBar
+            count={chatExport.selectedIds.size}
+            disabledExport={chatExport.selectedIds.size === 0}
+            onSelectAll={chatExport.selectAll}
+            onCancel={chatExport.exitSelectMode}
+            onExport={chatExport.doExport}
+          />
         )}
         <ChatWindow
           messages={messages}
           sending={sending}
-          selectMode={selectMode}
-          selectedIds={selectedIds}
-          onToggleSelect={toggleSelect}
+          selectMode={chatExport.selectMode}
+          selectedIds={chatExport.selectedIds}
+          onToggleSelect={chatExport.toggleSelect}
         />
         <div className="chat-input-area">
           {linkedDate && (
@@ -167,25 +126,7 @@ export default function AIPage() {
         </div>
       </div>
 
-      {/* 长图预览：手机长按图片保存到相册，也可下载为文件 */}
-      {exportImage && (
-        <div className="export-backdrop" onClick={() => setExportImage(null)}>
-          <div className="export-modal" onClick={(e) => e.stopPropagation()}>
-            <p className="export-tip">✅ 长图已生成：手机<b>长按图片</b>即可保存到相册</p>
-            <div className="export-img-wrap">
-              <img src={exportImage} alt="对话长图" />
-            </div>
-            <div className="export-actions">
-              <a className="tool-btn primary" href={exportImage} download="运势Log对话长图.png">
-                下载 PNG
-              </a>
-              <button type="button" className="tool-btn" onClick={() => setExportImage(null)}>
-                关闭
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ExportPreviewModal image={chatExport.exportImage} onClose={chatExport.closePreview} />
     </div>
   )
 }
