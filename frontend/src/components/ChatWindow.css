@@ -22,6 +22,11 @@
   font-size: 0.95rem;
 }
 
+/* AI 回复中的 **加粗** 渲染 */
+.bubble p strong {
+  font-weight: 700;
+}
+
 .bubble.user {
   margin-left: auto;
 }

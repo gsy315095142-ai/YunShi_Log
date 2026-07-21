@@ -1,5 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ChatMessage } from '../api/ai'
+
+/**
+ * 轻量 Markdown 渲染：仅处理 **加粗**，其余原样输出。
+ * 未闭合的 ** 保持原文，不引入第三方依赖。
+ */
+function renderRichText(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[\s\S]+?\*\*)/g)
+  return parts.map((part, i) =>
+    part.length > 4 && part.startsWith('**') && part.endsWith('**') ? (
+      <strong key={i}>{part.slice(2, -2)}</strong>
+    ) : (
+      part
+    ),
+  )
+}
 import './ChatWindow.css'
 
 interface ChatWindowProps {
@@ -32,15 +47,16 @@ export default function ChatWindow({ messages, sending, selectMode, selectedIds,
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }))
   }
 
-  // 只复制对话正文，不含思考过程
+  // 只复制对话正文，不含思考过程；去掉 ** 标记，复制出来是干净文字
   const copyContent = async (m: ChatMessage) => {
+    const clean = m.content.replace(/\*\*/g, '')
     try {
-      await navigator.clipboard.writeText(m.content)
+      await navigator.clipboard.writeText(clean)
     } catch {
       // 剪贴板 API 不可用（如 http 环境）时的兜底：临时框放到屏幕外并打标记，
       // 避免触发焦点监听导致底部 Tab 栏闪隐、页面跳动
       const ta = document.createElement('textarea')
-      ta.value = m.content
+      ta.value = clean
       ta.setAttribute('readonly', '')
       ta.dataset.copyHelper = '1'
       ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;'
@@ -95,7 +111,7 @@ export default function ChatWindow({ messages, sending, selectMode, selectedIds,
                 </div>
               )
             )}
-            <p>{m.content}</p>
+            <p>{renderRichText(m.content)}</p>
             {m.record_actions?.map((a, i) => (
               <span key={i} className="tag action-tag">
                 ✏️ 已{a.action === 'created' ? '新增' : '更新'} {fmtActionDate(a.date)} 的记录

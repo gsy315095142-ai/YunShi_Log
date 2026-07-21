@@ -83,7 +83,8 @@ export function renderChatImage(messages: ChatMessage[]): string {
   const items: Item[] = messages.map((msg) => {
     const isUser = msg.role === 'user'
     ctx.font = FONT
-    const lines = wrapText(ctx, msg.content, BUBBLE_MAX_W - BUBBLE_PAD_X * 2)
+    // 去掉 ** 加粗标记，长图上显示干净文字（Canvas 不便做富文本加粗）
+    const lines = wrapText(ctx, msg.content.replace(/\*\*/g, ''), BUBBLE_MAX_W - BUBBLE_PAD_X * 2)
     const bubbleW =
       Math.min(
         Math.max(...lines.map((l) => ctx.measureText(l).width)) + BUBBLE_PAD_X * 2,
