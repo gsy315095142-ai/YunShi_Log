@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -28,6 +28,9 @@ function HomeRedirect() {
 }
 
 export default function App() {
+  // 订阅路由变化，确保每次跳转都重新读取 token（否则退出登录后 authed 是旧值，
+  // /login 会被误判为已登录而跳回首页，形成无限重定向白屏）
+  useLocation()
   const authed = !!getToken()
 
   return (
