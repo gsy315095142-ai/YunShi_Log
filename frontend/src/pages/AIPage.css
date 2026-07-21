@@ -44,6 +44,22 @@
   color: var(--color-primary);
 }
 
+/* 紧跟摘要文字的紧凑版按钮（AI 配置） */
+.settings-btn.compact {
+  padding: 4px 10px;
+  min-height: 28px;
+  font-size: 0.75rem;
+}
+
+/* 配置栏右侧操作位（对话导出等），推到行尾 */
+.settings-actions {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .settings-icon {
   width: 15px;
   height: 15px;

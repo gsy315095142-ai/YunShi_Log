@@ -93,44 +93,44 @@ export default function AIPage() {
 
   return (
     <div className="ai-page">
-      <AISettingsCard />
+      <AISettingsCard
+        actions={
+          <button
+            type="button"
+            className="settings-btn"
+            disabled={exportable.length === 0}
+            onClick={() => setSelectMode(true)}
+            title="选择对话导出为长图"
+          >
+            🖼 对话导出
+          </button>
+        }
+      />
 
       <div className="card chat-card">
-        <div className={`chat-tools${selectMode ? ' selecting' : ''}`}>
-          {selectMode ? (
-            <>
-              <span className="select-count">已选 {selectedIds.size} 条</span>
-              <button
-                type="button"
-                className="tool-btn"
-                onClick={() => setSelectedIds(new Set(exportable.map((m) => m.id)))}
-              >
-                全选
-              </button>
-              <button type="button" className="tool-btn" onClick={exitSelectMode}>
-                取消
-              </button>
-              <button
-                type="button"
-                className="tool-btn primary"
-                disabled={selectedIds.size === 0}
-                onClick={doExport}
-              >
-                🖼 导出 PNG
-              </button>
-            </>
-          ) : (
+        {selectMode && (
+          <div className="chat-tools selecting">
+            <span className="select-count">已选 {selectedIds.size} 条</span>
             <button
               type="button"
               className="tool-btn"
-              disabled={exportable.length === 0}
-              onClick={() => setSelectMode(true)}
-              title="选择对话导出为长图"
+              onClick={() => setSelectedIds(new Set(exportable.map((m) => m.id)))}
             >
-              🖼 对话导出
+              全选
             </button>
-          )}
-        </div>
+            <button type="button" className="tool-btn" onClick={exitSelectMode}>
+              取消
+            </button>
+            <button
+              type="button"
+              className="tool-btn primary"
+              disabled={selectedIds.size === 0}
+              onClick={doExport}
+            >
+              🖼 导出 PNG
+            </button>
+          </div>
+        )}
         <ChatWindow
           messages={messages}
           sending={sending}

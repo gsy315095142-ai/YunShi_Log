@@ -7,7 +7,12 @@ import {
 } from '../api/ai'
 import { ApiError } from '../api/client'
 
-export default function AISettingsCard() {
+interface AISettingsCardProps {
+  /** 配置栏右侧操作位（如「对话导出」按钮） */
+  actions?: React.ReactNode
+}
+
+export default function AISettingsCard({ actions }: AISettingsCardProps) {
   const [providers, setProviders] = useState<AIProvider[]>([])
   const [provider, setProvider] = useState('deepseek')
   const [apiBaseUrl, setApiBaseUrl] = useState('')
@@ -82,9 +87,8 @@ export default function AISettingsCard() {
 
   const providerName = currentProvider?.name ?? provider
   const fallbackName = fallbackProviderInfo?.name ?? ''
-  const settingsSummary = `${
-    apiKeyMasked ? `${providerName} · ${model} · ${apiKeyMasked}` : `${providerName} · 未配置 API Key`
-  }${fallbackProvider && fallbackName ? `（备用：${fallbackName}）` : ''}`
+  // 摘要只显示厂商与模型，不暴露 Key；备用厂商以括号附带
+  const settingsSummary = `${providerName} · ${model}${fallbackProvider && fallbackName ? `（备用：${fallbackName}）` : ''}`
 
   return (
     <>
@@ -92,7 +96,7 @@ export default function AISettingsCard() {
         <span className="settings-status">{settingsSummary}</span>
         <button
           type="button"
-          className="settings-btn"
+          className="settings-btn compact"
           onClick={() => {
             setSettingsMsg('')
             setSettingsOpen(true)
@@ -101,6 +105,8 @@ export default function AISettingsCard() {
           <svg className="settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" /></svg>
           AI 配置
         </button>
+        {/* 右侧操作位（如「对话导出」），由父组件注入 */}
+        {actions && <span className="settings-actions">{actions}</span>}
       </div>
 
       {settingsOpen && (
