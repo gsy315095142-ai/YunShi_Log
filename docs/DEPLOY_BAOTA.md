@@ -117,6 +117,10 @@ location /api/ {
 宝塔 **文件** → 进入 `/www/wwwroot/lumiclaw.top/sylog/` → 清空旧文件 → 上传 zip → 解压到当前目录；
 确认 `sylog/index.html` 与 `sylog/assets/` 就位。
 
+> 注：这是**首次部署**的做法。2026-07-21 起服务器已装 Node.js，
+> **日常更新**改为在服务器上 `git pull` 后执行 `bash scripts/deploy-frontend.sh` 直接构建同步，
+> 详见 `UPDATE_RUNBOOK.md`「二、前端更新」。
+
 ## 第 7 步：自检
 
 | 检查项 | 命令或地址 |
