@@ -81,7 +81,7 @@ export default function AIPage() {
               <textarea
                 value={input}
                 onChange={onInputChange}
-                placeholder="输入内容，用 @ 关联日期..."
+                placeholder="输入内容可@关联日期"
                 rows={2}
               />
               {showDatePicker && (
