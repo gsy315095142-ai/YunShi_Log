@@ -392,6 +392,99 @@
   color: var(--color-text-secondary);
 }
 
+/* —— 对话工具栏（导出） —— */
+.chat-tools {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 4px 8px;
+}
+
+.chat-tools.selecting {
+  justify-content: flex-start;
+}
+
+.select-count {
+  margin-right: auto;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.tool-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text-label);
+  font-size: 0.82rem;
+}
+
+.tool-btn.primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.tool-btn:disabled {
+  opacity: 0.45;
+}
+
+/* —— 单条复制按钮 —— */
+.copy-btn {
+  display: inline-block;
+  margin-top: 4px;
+  margin-left: 6px;
+  padding: 2px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}
+
+.bubble.user .copy-btn {
+  background: var(--color-primary-soft);
+}
+
+.copy-btn.done {
+  color: var(--color-primary);
+  border-color: var(--color-primary-light);
+}
+
+/* —— 导出多选模式 —— */
+.bubble.selectable {
+  position: relative;
+  padding-left: 34px;
+  cursor: pointer;
+}
+
+.bubble.selected .select-check {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.select-check {
+  position: absolute;
+  left: 6px;
+  top: 10px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border-strong);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: transparent;
+  font-size: 12px;
+  line-height: 17px;
+  text-align: center;
+}
+
+.bubble.selected > p {
+  outline: 2px solid var(--color-primary-light);
+  outline-offset: 1px;
+}
+
 /* 本地提示气泡（未配置 API Key 等），警示色调 */
 .bubble.notice {
   border: 1px dashed var(--color-danger);
