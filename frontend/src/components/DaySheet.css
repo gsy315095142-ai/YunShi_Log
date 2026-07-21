@@ -1,4 +1,4 @@
-/* —— 底部弹出层（bottom sheet） —— */
+/* —— 居中弹窗（原底部弹出层，改中间弹出方便阅读） —— */
 .sheet-backdrop {
   position: fixed;
   inset: 0;
@@ -19,26 +19,26 @@
 .day-sheet {
   position: fixed;
   left: 50%;
-  transform: translateX(-50%);
-  bottom: 0;
-  width: 100%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 32px);
   max-width: 480px;
-  max-height: 78dvh;
+  max-height: 80dvh;
   display: flex;
   flex-direction: column;
-  border-radius: 18px 18px 0 0;
-  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
-  box-shadow: 0 -8px 32px rgba(46, 36, 56, 0.2);
-  animation: sheet-rise 0.25s ease;
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 8px 32px rgba(46, 36, 56, 0.25);
+  animation: sheet-pop 0.2s ease;
 }
 
-@keyframes sheet-rise {
+@keyframes sheet-pop {
   from {
-    transform: translate(-50%, 24px);
+    transform: translate(-50%, -50%) scale(0.95);
     opacity: 0;
   }
   to {
-    transform: translate(-50%, 0);
+    transform: translate(-50%, -50%) scale(1);
     opacity: 1;
   }
 }
@@ -115,8 +115,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   width: 34px;
   height: 34px;
+  padding: 0;
   border: none;
   border-radius: 8px;
   background: transparent;
@@ -127,6 +129,8 @@
 .icon-btn svg {
   width: 16px;
   height: 16px;
+  flex-shrink: 0;
+  display: block;
 }
 
 .icon-btn:hover {
