@@ -90,10 +90,10 @@ frontend/src/
 - **访问方式**：网页端，手机浏览器可正常访问。
 - **登录**：账号 + 密码。
 - **注册**：开放注册，任意用户可创建账号。
-- **默认账号**：
-  - 用户名：`Guosy`
-  - 密码：`1234567890`
-  - 角色：**管理员**（`admin`）
+- **默认账号**（启动时按需补齐，缺谁建谁）：
+  - `Guosy` / `1234567890`，角色：**管理员**（`admin`）
+  - `suyan` / `1234567890`，角色：普通用户（`user`）
+- **修改密码**：登录页提供入口，凭「账号 + 旧密码」即可重置（`POST /auth/change-password`）。
 - **普通用户**：注册即为普通用户（`user`）。
 - **权限**：第一版管理员与普通用户**功能无区别**，仅在数据模型中预留 `role` 字段，便于后期扩展。
 - **数据隔离**：每个账号只能访问自己的个人信息、每日记录、AI 配置与聊天记录。
@@ -401,11 +401,10 @@ users 1 ── * ai_chat_messages
 
 ### 5.3 初始化数据
 
-应用首次启动时，若不存在用户 `Guosy`，则自动创建：
+应用启动时按需补齐默认账号（已存在则跳过，老库也会自动补建）：
 
-- username: `Guosy`
-- password: `1234567890`（存储为哈希）
-- role: `admin`
+- `Guosy` / `1234567890`（存储为哈希），role: `admin`
+- `suyan` / `1234567890`（存储为哈希），role: `user`
 
 ---
 
@@ -420,7 +419,7 @@ users 1 ── * ai_chat_messages
 |------|------|------|
 | POST | `/auth/register` | 注册 `{ username, password }` |
 | POST | `/auth/login` | 登录，返回 token |
-| POST | `/auth/logout` | 登出（若用 Session） |
+| POST | `/auth/change-password` | 凭旧密码修改密码 `{ username, old_password, new_password }` |
 | GET | `/auth/me` | 当前用户信息含 role |
 
 ### 6.2 个人信息
@@ -603,6 +602,7 @@ users 1 ── * ai_chat_messages
 | 2026-07-20 | 今日卡片升级为自治记录卡：直接书写/内联编辑/删除确认，无需打开弹层；新增「测算今日运势」入口（跳转 AI 页预填提问与日期）；MBTI 改下拉选择（ENTP 置顶） |
 | 2026-07-20 | AI 工具调用：测算大师可在用户明确指示时写入/修改每日记录（Function Calling，两段式执行）；仅开放写不开放删；聊天内显示操作回执；注入当前日期上下文 |
 | 2026-07-20 | **阿里云上线**：git 克隆部署（Deploy Keys）+ venv（/usr/bin/python3.11）+ Supervisor 守护 + nginx 反代 + 前端 dist 上传；`run-prod.sh` 自动加载 .env 并使用 venv uvicorn；踩坑记录：root/admin 双用户密钥、运行用户与文件属主需一致 |
+| 2026-07-21 | 登录页修改密码（`POST /auth/change-password`）；新增默认账号 suyan（种子改为按需补齐）；智谱默认端点改为套餐专属（`/api/coding/paas/v4`）；首页按资料完整度智能跳转；错误提示改聊天气泡；生日/时间改独立下拉；键盘弹出自动隐藏 Tab 栏；修复 auth/service.py 漏导入导致的启动 NameError（教训：后端改动必跑 `from app.main import app` 冒烟）；发版 v0.1.26072101 |
 
 ---
 
@@ -612,6 +612,6 @@ users 1 ── * ai_chat_messages
 
 > 项目为手机优先网页应用，技术栈为 API + SQLite + SPA。  
 > 三页：个人信息（公历生日推星座，农历年推五行生肖，农历自动展示）、每日记录（日历多条）、AI测算（测算大师，DeepSeek/智谱）。  
-> 默认账号 Guosy/1234567890 为 admin；开放注册；数据按用户隔离。  
+> 默认账号 Guosy/1234567890（admin）与 suyan/1234567890（user），启动时按需补齐；开放注册；数据按用户隔离；登录页可凭旧密码修改密码。  
 > **开发原则：按功能域拆分模块，禁止单文件堆全部逻辑，功能点低耦合。**  
 > 详细设计见 `docs/PROJECT_DESIGN.md`。

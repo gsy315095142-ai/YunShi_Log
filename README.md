@@ -5,7 +5,7 @@
 ## 当前状态
 
 - Phase 1～5 已完成，**已上线**：`http://www.lumiclaw.top/sylog/`（阿里云 + 宝塔，HTTP 阶段）
-- 当前版本 v0.1.26072001（登录页可查看版本更新说明）
+- 当前版本 v0.1.26072101（登录页可查看版本更新说明）
 - 需求与设计见 [`docs/PROJECT_DESIGN.md`](docs/PROJECT_DESIGN.md)
 - 首次部署见 [`docs/DEPLOY_BAOTA.md`](docs/DEPLOY_BAOTA.md)；日常更新（发版/回滚）见 [`docs/UPDATE_RUNBOOK.md`](docs/UPDATE_RUNBOOK.md)
 
@@ -59,10 +59,16 @@ npm run dev
 - 首次启动若 Windows 弹出防火墙提示，需允许 **Node.js 通过专用网络**，否则其他设备连不上 5173。
 - 若 LAN 地址显示 "could not detect LAN IP"，请检查本机网络连接后重启脚本。
 
-## 默认管理员
+## 默认账号
 
-- 用户名：`Guosy`
-- 密码：`1234567890`
+启动时按需补齐（已存在则跳过）：
+
+| 账号 | 初始密码 | 角色 |
+|------|----------|------|
+| `Guosy` | `1234567890` | 管理员 |
+| `suyan` | `1234567890` | 普通用户 |
+
+> 登录页提供「修改密码」入口，凭旧密码即可重置，上线后请尽快改掉初始密码。
 
 ## 项目结构
 
