@@ -129,19 +129,23 @@ export default function AIPage() {
                 ＋
               </button>
               {showQuickSend && (
-                <div className="quick-send-popover">
-                  {QUICK_SENDS.map((q) => (
-                    <button
-                      key={q}
-                      type="button"
-                      className="quick-send-item"
-                      disabled={sending}
-                      onClick={() => onQuickSend(q)}
-                    >
-                      {q}
-                    </button>
-                  ))}
-                </div>
+                <>
+                  {/* 透明遮罩：点击外部任意位置收回弹层 */}
+                  <div className="quick-send-backdrop" onClick={() => setShowQuickSend(false)} />
+                  <div className="quick-send-popover">
+                    {QUICK_SENDS.map((q) => (
+                      <button
+                        key={q}
+                        type="button"
+                        className="quick-send-item"
+                        disabled={sending}
+                        onClick={() => onQuickSend(q)}
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
             <div className="input-wrapper">
