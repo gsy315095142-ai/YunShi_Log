@@ -100,3 +100,8 @@
 .export-actions .tool-btn {
   text-decoration: none;
 }
+
+/* 离线兜底提示（长图未上传到服务器时） */
+.export-tip.warn {
+  color: var(--color-danger);
+}

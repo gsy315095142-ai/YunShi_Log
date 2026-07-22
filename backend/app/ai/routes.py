@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, File, Query, UploadFile
 from sqlalchemy.orm import Session
 
 from app.ai.chat_repository import list_chat_history
 from app.ai.chat_service import send_chat
+from app.ai.export_image import get_export_image, upload_export_image
 from app.ai.schemas import (
     AISettingsResponse,
     AISettingsUpdateRequest,
@@ -53,3 +54,14 @@ def chat_history(
     db: Session = Depends(get_db),
 ):
     return list_chat_history(db, user, limit)
+
+
+@router.post("/chat/export-image")
+async def upload_export(file: UploadFile = File(...), user: User = Depends(get_current_user)):
+    return await upload_export_image(file, user)
+
+
+@router.get("/chat/export-image/{user_id}/{filename}")
+def download_export(user_id: str, filename: str):
+    # 无需鉴权：文件名为随机 UUID 不可枚举，且每用户只保留最近 N 张
+    return get_export_image(user_id, filename)

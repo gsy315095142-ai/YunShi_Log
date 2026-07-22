@@ -126,7 +126,7 @@ export default function AIPage() {
         </div>
       </div>
 
-      <ExportPreviewModal image={chatExport.exportImage} onClose={chatExport.closePreview} />
+      <ExportPreviewModal image={chatExport.exportImage} offline={chatExport.exportOffline} onClose={chatExport.closePreview} />
     </div>
   )
 }
