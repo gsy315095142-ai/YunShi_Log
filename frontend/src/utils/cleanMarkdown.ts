@@ -1,11 +1,23 @@
 /**
- * 去掉 Markdown 标记（行首 # 标题符号 与 ** 加粗符号），
+ * 去掉 Markdown 标记（行首 # 标题、** 加粗、表格语法），
  * 用于复制、导出长图等需要纯文本的场景。
+ * 表格行转为「单元格 ｜ 单元格」的纯文本，分隔行（|---|）直接丢弃。
  */
 export function cleanMarkdown(text: string): string {
   return text
     .split('\n')
-    .map((line) => line.replace(/^#{1,6}\s+/, ''))
+    .filter((line) => !(line.includes('-') && line.trim().replace(/[\s|:;-]/g, '') === ''))
+    .map((line) => {
+      if (line.includes('|')) {
+        const cells = line
+          .trim()
+          .replace(/^\||\|$/g, '')
+          .split('|')
+          .map((c) => c.trim())
+        if (cells.length > 1) return cells.join(' ｜ ')
+      }
+      return line.replace(/^#{1,6}\s+/, '')
+    })
     .join('\n')
     .replace(/\*\*/g, '')
 }

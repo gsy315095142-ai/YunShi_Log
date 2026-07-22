@@ -13,7 +13,7 @@
   max-width: 88%;
 }
 
-.bubble p {
+.bubble .bubble-text {
   margin: 0;
   padding: 10px 12px;
   border-radius: 12px;
@@ -23,7 +23,7 @@
 }
 
 /* AI 回复中的 **加粗** 渲染 */
-.bubble p strong {
+.bubble .bubble-text strong {
   font-weight: 700;
 }
 
@@ -49,14 +49,49 @@
   margin-left: auto;
 }
 
-.bubble.user p {
+.bubble.user .bubble-text {
   background: var(--color-primary);
   color: #fff;
 }
 
-.bubble.assistant p {
+.bubble.assistant .bubble-text {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
+}
+
+/* Markdown 表格：边框 + 横向可滑动 */
+.bubble .md-table {
+  display: block;
+  overflow-x: auto;
+  margin: 6px 0;
+}
+
+.bubble .md-table table {
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.bubble .md-table th,
+.bubble .md-table td {
+  border: 1px solid var(--color-border-strong);
+  padding: 5px 10px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.bubble .md-table th {
+  background: var(--color-primary-faint);
+  font-weight: 700;
+}
+
+/* 用户气泡（紫底白字）里的表格配色 */
+.bubble.user .md-table th,
+.bubble.user .md-table td {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.bubble.user .md-table th {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* —— 思考内容框：与发言气泡区分，默认收起 —— */
@@ -222,7 +257,7 @@
   text-align: center;
 }
 
-.bubble.selected > p {
+.bubble.selected > .bubble-text {
   outline: 2px solid var(--color-primary-light);
   outline-offset: 1px;
 }

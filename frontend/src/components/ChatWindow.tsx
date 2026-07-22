@@ -14,20 +14,89 @@ function renderInline(text: string): React.ReactNode {
   )
 }
 
+/** 表格行 → 单元格数组：'| a | b |' → ['a', 'b'] */
+function splitTableRow(line: string): string[] {
+  return line
+    .trim()
+    .replace(/^\||\|$/g, '')
+    .split('|')
+    .map((c) => c.trim())
+}
+
+/** 分隔行（|---|---|）判定：去掉 |、-、:、空格后应为空 */
+function isSeparatorRow(line: string): boolean {
+  return line.includes('-') && line.trim().replace(/[\s|:;-]/g, '') === ''
+}
+
+/** 渲染单行（标题高亮 / 普通行） */
+function renderLine(line: string, key: number): React.ReactNode {
+  const heading = line.match(/^(#{1,6})\s+(.*)$/)
+  return (
+    <span key={key}>
+      {heading ? <strong className="md-heading">{renderInline(heading[2])}</strong> : renderInline(line)}
+    </span>
+  )
+}
+
 /**
  * 轻量 Markdown 渲染（无第三方依赖）：
- * 行首 # ~ ###### 标题 → 加粗高亮行；行内 **加粗** → <strong>；其余原样。
+ * 行首 # 标题 → 加粗高亮行；| 表格 | → 真表格（可横向滑动）；**加粗** → <strong>。
  */
 function renderRichText(text: string): React.ReactNode {
-  return text.split('\n').map((line, i) => {
-    const heading = line.match(/^(#{1,6})\s+(.*)$/)
-    return (
-      <span key={i}>
-        {i > 0 && '\n'}
-        {heading ? <strong className="md-heading">{renderInline(heading[2])}</strong> : renderInline(line)}
-      </span>
-    )
-  })
+  const lines = text.split('\n')
+  const blocks: React.ReactNode[] = []
+  let key = 0
+  let i = 0
+
+  while (i < lines.length) {
+    // 表格块：当前行像表格行，且下一行是分隔行
+    if (
+      lines[i].includes('|') &&
+      i + 1 < lines.length &&
+      isSeparatorRow(lines[i + 1])
+    ) {
+      const header = splitTableRow(lines[i])
+      const body: string[][] = []
+      i += 2 // 跳过表头与分隔行
+      while (i < lines.length && lines[i].includes('|') && lines[i].trim() !== '') {
+        body.push(splitTableRow(lines[i]))
+        i++
+      }
+      blocks.push(
+        <div key={key++} className="md-table">
+          <table>
+            <thead>
+              <tr>
+                {header.map((c, j) => (
+                  <th key={j}>{renderInline(c)}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {body.map((row, r) => (
+                <tr key={r}>
+                  {row.map((c, j) => (
+                    <td key={j}>{renderInline(c)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>,
+      )
+      continue
+    }
+    blocks.push(renderLine(lines[i], key++))
+    i++
+  }
+
+  // 用 \n 连接（容器 white-space: pre-wrap），表格块前后同样换行
+  return blocks.map((b, i) => (
+    <span key={i}>
+      {i > 0 && '\n'}
+      {b}
+    </span>
+  ))
 }
 import './ChatWindow.css'
 
@@ -125,7 +194,7 @@ export default function ChatWindow({ messages, sending, selectMode, selectedIds,
                 </div>
               )
             )}
-            <p>{renderRichText(m.content)}</p>
+            <div className="bubble-text">{renderRichText(m.content)}</div>
             {m.record_actions?.map((a, i) => (
               <span key={i} className="tag action-tag">
                 ✏️ 已{a.action === 'created' ? '新增' : '更新'} {fmtActionDate(a.date)} 的记录
