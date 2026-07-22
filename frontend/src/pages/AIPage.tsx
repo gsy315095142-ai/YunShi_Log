@@ -159,8 +159,8 @@ export default function AIPage() {
                 <DatePickerPopover dateOptions={dateOptions} onSelect={onSelectDate} />
               )}
             </div>
-            <button type="button" onClick={onSend} disabled={sending}>
-              发送
+            <button type="button" className="send-btn" aria-label="发送" onClick={onSend} disabled={sending}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2 11 13" /><path d="M22 2 15 22l-4-9-9-4 20-7z" /></svg>
             </button>
           </div>
         </div>

@@ -72,17 +72,28 @@
   font-size: 1rem;
 }
 
-/* 发送按钮（> 限定直接子级，避免误伤「＋」按钮） */
-.chat-input-row > button {
+/* 发送按钮：纸飞机图标圆钮（> 限定直接子级，避免误伤「＋」按钮） */
+.chat-input-row > .send-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  min-height: 0;
+  padding: 0;
   border: none;
-  border-radius: var(--radius-control);
+  border-radius: 50%;
   background: var(--color-primary);
   color: #fff;
-  padding: 0 16px;
-  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.chat-input-row > button:disabled {
+.chat-input-row > .send-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.chat-input-row > .send-btn:disabled {
   opacity: 0.6;
 }
 
@@ -100,13 +111,13 @@
 }
 
 .quick-send-btn {
-  width: 44px;
-  height: 44px;
+  width: 32px;
+  height: 32px;
   border: 1px solid var(--color-border-strong);
   border-radius: 50%;
   background: var(--color-surface);
   color: var(--color-text-label);
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   line-height: 1;
   display: flex;
   align-items: center;
@@ -127,11 +138,10 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-control);
   box-shadow: 0 4px 18px rgba(46, 36, 56, 0.14);
-  padding: 6px;
+  padding: 4px;
   z-index: 20;
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
 .quick-send-item {
@@ -139,11 +149,17 @@
   background: none;
   text-align: left;
   padding: 10px 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 0.88rem;
   color: var(--color-text);
   white-space: normal;
   line-height: 1.4;
+}
+
+/* 快捷项之间的分隔线 */
+.quick-send-item + .quick-send-item {
+  border-top: 1px solid var(--color-border);
+  border-radius: 0;
 }
 
 .quick-send-item:hover {
