@@ -615,6 +615,7 @@ users 1 ── * ai_chat_messages
 | 2026-07-21 | 结构重构第二批（零功能变化）：AIPage 导出功能抽离为 `hooks/useChatExport.ts` + `components/ChatExportBar.tsx` + `components/ExportPreviewModal.tsx`（样式入 ChatExport.css），AIPage.tsx 回到 132 行纯编排；后端 chat_service.py(178行) 拆为 `chat_repository.py`（历史读写+save_message 落库）+ `tool_runner.py`（run_with_tools 工具循环），chat_service 只留 send_chat 编排（72 行），API 契约不变 |
 | 2026-07-21 | AI 回复支持 `**加粗**` 渲染（轻量实现，未闭合标记原样显示）；复制与导出长图自动去掉 `**` 输出干净文字；修复今日卡片删除图标被 flex 挤压显示不全（flex-shrink 防护）；DaySheet 由底部弹出层改为居中弹窗（缩放淡入） |
 | 2026-07-21 | **前端部署流程升级**：服务器已装 Node v24，前端改为「git pull + `bash scripts/deploy-frontend.sh`」服务器直接构建（npm registry 已配 npmmirror 镜像），告别本地打 zip 上传；zip 方式保留为备选（见 UPDATE_RUNBOOK） |
+| 2026-07-22 | 长图保存修复：部分手机浏览器无法长按保存 data: URL 图片，改为 blob URL 预览（关闭时 revoke）+ img 显式 touch-callout；聊天气泡新增时间戳（`fmtMsgTime`，导出长图角色名同步带时间）；Markdown 渲染扩展：行首 #~###### 标题渲染为加粗高亮行，新增 `utils/cleanMarkdown.ts` 统一清理 `**`/`#`（复制、导出共用） |
 
 ---
 

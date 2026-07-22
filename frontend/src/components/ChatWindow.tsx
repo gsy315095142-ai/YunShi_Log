@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ChatMessage } from '../api/ai'
+import { cleanMarkdown, fmtMsgTime } from '../utils/cleanMarkdown'
 
-/**
- * 轻量 Markdown 渲染：仅处理 **加粗**，其余原样输出。
- * 未闭合的 ** 保持原文，不引入第三方依赖。
- */
-function renderRichText(text: string): React.ReactNode {
+/** 行内渲染：仅处理 **加粗**，未闭合标记原样输出 */
+function renderInline(text: string): React.ReactNode {
   const parts = text.split(/(\*\*[\s\S]+?\*\*)/g)
   return parts.map((part, i) =>
     part.length > 4 && part.startsWith('**') && part.endsWith('**') ? (
@@ -14,6 +12,22 @@ function renderRichText(text: string): React.ReactNode {
       part
     ),
   )
+}
+
+/**
+ * 轻量 Markdown 渲染（无第三方依赖）：
+ * 行首 # ~ ###### 标题 → 加粗高亮行；行内 **加粗** → <strong>；其余原样。
+ */
+function renderRichText(text: string): React.ReactNode {
+  return text.split('\n').map((line, i) => {
+    const heading = line.match(/^(#{1,6})\s+(.*)$/)
+    return (
+      <span key={i}>
+        {i > 0 && '\n'}
+        {heading ? <strong className="md-heading">{renderInline(heading[2])}</strong> : renderInline(line)}
+      </span>
+    )
+  })
 }
 import './ChatWindow.css'
 
@@ -47,9 +61,9 @@ export default function ChatWindow({ messages, sending, selectMode, selectedIds,
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }))
   }
 
-  // 只复制对话正文，不含思考过程；去掉 ** 标记，复制出来是干净文字
+  // 只复制对话正文，不含思考过程；去掉 Markdown 标记（** 与 #），复制出来是干净文字
   const copyContent = async (m: ChatMessage) => {
-    const clean = m.content.replace(/\*\*/g, '')
+    const clean = cleanMarkdown(m.content)
     try {
       await navigator.clipboard.writeText(clean)
     } catch {
@@ -119,6 +133,7 @@ export default function ChatWindow({ messages, sending, selectMode, selectedIds,
             ))}
             {m.used_fallback && <span className="tag fallback-tag">🔄 已由备用模型接手</span>}
             {m.linked_date && <span className="tag">📅 {m.linked_date}</span>}
+            <span className="bubble-time">{fmtMsgTime(m.created_at)}</span>
             {!selectMode && !m.notice && (
               <button
                 type="button"

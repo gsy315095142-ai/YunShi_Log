@@ -2,9 +2,11 @@
  * 对话导出为 PNG 长图。
  * 纯 Canvas 手绘（不引入 html2canvas 依赖）：两趟渲染——先量高、再绘制。
  * 只导出对话正文与回执标签，不包含思考过程。
- * 返回 dataURL，由页面弹预览：手机长按存相册，也可点按钮下载。
+ * 返回 blob URL（部分手机浏览器无法长按保存 data: URL 图片，blob: 兼容性更好），
+ * 由页面弹预览：手机长按存相册，也可点按钮下载；关闭预览时记得 revoke。
  */
 import type { ChatMessage } from '../api/ai'
+import { cleanMarkdown, fmtMsgTime } from './cleanMarkdown'
 
 const W = 720 // 逻辑宽度（实际像素 ×2，保证手机上看清晰）
 const SCALE = 2
@@ -74,7 +76,7 @@ function fmtActionDate(iso: string) {
   return `${Number(m)}月${Number(d)}日`
 }
 
-export function renderChatImage(messages: ChatMessage[]): string {
+export function renderChatImage(messages: ChatMessage[]): Promise<string> {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')!
   ctx.font = FONT
@@ -83,8 +85,8 @@ export function renderChatImage(messages: ChatMessage[]): string {
   const items: Item[] = messages.map((msg) => {
     const isUser = msg.role === 'user'
     ctx.font = FONT
-    // 去掉 ** 加粗标记，长图上显示干净文字（Canvas 不便做富文本加粗）
-    const lines = wrapText(ctx, msg.content.replace(/\*\*/g, ''), BUBBLE_MAX_W - BUBBLE_PAD_X * 2)
+    // 去掉 Markdown 标记（** 与行首 #），长图上显示干净文字（Canvas 不便做富文本）
+    const lines = wrapText(ctx, cleanMarkdown(msg.content), BUBBLE_MAX_W - BUBBLE_PAD_X * 2)
     const bubbleW =
       Math.min(
         Math.max(...lines.map((l) => ctx.measureText(l).width)) + BUBBLE_PAD_X * 2,
@@ -134,10 +136,11 @@ export function renderChatImage(messages: ChatMessage[]): string {
   for (const item of items) {
     const x = item.isUser ? W - PAD - item.bubbleW : PAD
 
-    // 角色名
+    // 角色名 + 时间
     ctx.fillStyle = COLORS.label
     ctx.font = SMALL_FONT
-    const name = item.isUser ? '我' : '🔮 测算大师'
+    const time = fmtMsgTime(item.msg.created_at)
+    const name = `${item.isUser ? '我' : '🔮 测算大师'}${time ? ` · ${time}` : ''}`
     if (item.isUser) {
       ctx.textAlign = 'right'
       ctx.fillText(name, W - PAD, y + 14)
@@ -192,5 +195,14 @@ export function renderChatImage(messages: ChatMessage[]): string {
   ctx.textAlign = 'center'
   ctx.fillText('—— 由 运势 Log 导出 ——', W / 2, y + 20)
 
-  return canvas.toDataURL('image/png')
+  // blob URL：手机浏览器对 data: URL 图片常无法长按保存/下载，blob: 兼容性好得多
+  return new Promise<string>((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) {
+        resolve(URL.createObjectURL(blob))
+      } else {
+        reject(new Error('生成长图失败'))
+      }
+    }, 'image/png')
+  })
 }

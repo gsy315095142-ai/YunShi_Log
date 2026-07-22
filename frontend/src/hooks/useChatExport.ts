@@ -35,14 +35,16 @@ export function useChatExport(messages: ChatMessage[]) {
     setSelectedIds(new Set())
   }
 
-  const doExport = () => {
+  const doExport = async () => {
     const list = messages.filter((m) => selectedIds.has(m.id) && !m.notice)
     if (list.length === 0) return
-    setExportImage(renderChatImage(list))
+    setExportImage(await renderChatImage(list))
     exitSelectMode()
   }
 
   const closePreview = () => {
+    // 释放 blob URL，避免内存泄漏
+    if (exportImage?.startsWith('blob:')) URL.revokeObjectURL(exportImage)
     setExportImage(null)
   }
 

@@ -86,6 +86,9 @@
 .export-img-wrap img {
   display: block;
   width: 100%;
+  /* 确保手机长按能呼出「保存图片」菜单 */
+  -webkit-touch-callout: default;
+  user-select: auto;
 }
 
 .export-actions {

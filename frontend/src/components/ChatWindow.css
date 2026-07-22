@@ -27,6 +27,24 @@
   font-weight: 700;
 }
 
+/* AI 回复中的 # 标题行：加粗高亮，不用巨大字号 */
+.bubble .md-heading {
+  color: var(--color-primary);
+}
+
+/* 消息时间戳 */
+.bubble .bubble-time {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.68rem;
+  color: var(--color-text-secondary);
+  opacity: 0.85;
+}
+
+.bubble.user .bubble-time {
+  text-align: right;
+}
+
 .bubble.user {
   margin-left: auto;
 }
