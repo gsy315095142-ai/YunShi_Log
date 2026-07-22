@@ -12,7 +12,10 @@ export function cleanMarkdown(text: string): string {
 
 /** '2026-07-21T18:05:00' → '07-21 18:05'（对话时间戳展示用） */
 export function fmtMsgTime(iso: string): string {
-  const d = new Date(iso)
+  // 后端 SQLite CURRENT_TIMESTAMP 存的是 UTC 且无时区后缀，JS 会误当本地时间；
+  // 无时区信息时补 'Z' 按 UTC 解析，再转为本地时间显示
+  const hasTz = iso.endsWith('Z') || /[+-]\d{2}:?\d{2}$/.test(iso)
+  const d = new Date(hasTz ? iso : `${iso}Z`)
   if (Number.isNaN(d.getTime())) return ''
   const p = (n: number) => String(n).padStart(2, '0')
   return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`
