@@ -617,6 +617,7 @@ users 1 ── * ai_chat_messages
 | 2026-07-21 | **前端部署流程升级**：服务器已装 Node v24，前端改为「git pull + `bash scripts/deploy-frontend.sh`」服务器直接构建（npm registry 已配 npmmirror 镜像），告别本地打 zip 上传；zip 方式保留为备选（见 UPDATE_RUNBOOK） |
 | 2026-07-22 | 长图保存修复：部分手机浏览器无法长按保存 data: URL 图片，改为 blob URL 预览（关闭时 revoke）+ img 显式 touch-callout；聊天气泡新增时间戳（`fmtMsgTime`，导出长图角色名同步带时间）；Markdown 渲染扩展：行首 #~###### 标题渲染为加粗高亮行，新增 `utils/cleanMarkdown.ts` 统一清理 `**`/`#`（复制、导出共用）；修复 SQLite UTC 无时区后缀导致 AI 时间戳慢 8 小时（fmtMsgTime 补 Z 按 UTC 解析） |
 | 2026-07-22 | 长图保存根治：微信/国产浏览器对 blob: 也无法长按保存与 download → 新增后端 `POST/GET /ai/chat/export-image`（`export_image.py`，PNG 上传存 `data/exports/{user_id}/{uuid}.png`，每用户保留最近 10 张自动清理，GET 按 UUID 免鉴权不可枚举）；前端生成后先上传换真实 http URL 再预览，上传失败回退本地预览并显示明确的保存指引提示 |
+| 2026-07-22 | Markdown 表格渲染：`| 表格 |` 渲染为真表格（表头高亮、窄屏横滑），气泡正文容器 p→div.bubble-text；复制/导出时表格转「a ｜ b」纯文本；AI 输入区新增「＋」快捷发送（两条预设提问直发）；发版 v0.1.26072201 |
 
 ---
 
