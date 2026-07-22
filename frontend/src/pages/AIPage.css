@@ -83,3 +83,65 @@
 .chat-input-row button:disabled {
   opacity: 0.6;
 }
+
+/* —— 「＋」快捷发送 —— */
+.quick-send-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.quick-send-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text-label);
+  font-size: 1.2rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-send-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.quick-send-popover {
+  position: absolute;
+  left: 0;
+  bottom: 46px;
+  width: 240px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  box-shadow: 0 4px 18px rgba(46, 36, 56, 0.14);
+  padding: 6px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.quick-send-item {
+  border: none;
+  background: none;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: var(--color-text);
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.quick-send-item:hover {
+  background: var(--color-primary-faint);
+  color: var(--color-primary);
+}
+
+.quick-send-item:disabled {
+  opacity: 0.5;
+}

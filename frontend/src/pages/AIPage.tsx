@@ -10,12 +10,16 @@ import DatePickerPopover from '../components/DatePickerPopover'
 import ExportPreviewModal from '../components/ExportPreviewModal'
 import './AIPage.css'
 
+/** 「＋」快捷发送的预设提问，点击直接发送 */
+const QUICK_SENDS = ['我今天的运势怎么样，请详细说明', '请分析一下我的整体情况']
+
 export default function AIPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const [linkedDate, setLinkedDate] = useState('')
   const [dateOptions, setDateOptions] = useState<string[]>([])
   const [showDatePicker, setShowDatePicker] = useState(false)
+  const [showQuickSend, setShowQuickSend] = useState(false)
   const [input, setInput] = useState('')
   const { messages, sending, send } = useAIChat()
   const chatExport = useChatExport(messages)
@@ -65,6 +69,13 @@ export default function AIPage() {
     await send(userText, sentDate)
   }
 
+  // 「＋」快捷发送：直接发送预设提问，无需经过输入框
+  const onQuickSend = async (text: string) => {
+    if (sending) return
+    setShowQuickSend(false)
+    await send(text, '')
+  }
+
   return (
     <div className="ai-page">
       <AISettingsCard
@@ -108,6 +119,31 @@ export default function AIPage() {
             </div>
           )}
           <div className="chat-input-row">
+            <div className="quick-send-wrapper">
+              <button
+                type="button"
+                className="quick-send-btn"
+                aria-label="快捷发送"
+                onClick={() => setShowQuickSend((v) => !v)}
+              >
+                ＋
+              </button>
+              {showQuickSend && (
+                <div className="quick-send-popover">
+                  {QUICK_SENDS.map((q) => (
+                    <button
+                      key={q}
+                      type="button"
+                      className="quick-send-item"
+                      disabled={sending}
+                      onClick={() => onQuickSend(q)}
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="input-wrapper">
               <textarea
                 value={input}
