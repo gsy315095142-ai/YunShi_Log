@@ -38,6 +38,22 @@ def _apply_column_migrations() -> None:
         conn.commit()
 
 
+def _rename_legacy_admin(db: Session) -> None:
+    """历史大写管理员账号 Guosy 统一为小写 guosy（一次性迁移，幂等）。
+
+    数据按 user_id 关联，改用户名不影响任何业务数据。
+    若小写名已被占用（用户自行注册过）则跳过，避免唯一约束冲突。
+    """
+    legacy = db.query(User).filter(User.username == "Guosy").first()
+    if legacy is None:
+        return
+    conflict = db.query(User).filter(User.username == "guosy").first()
+    if conflict is not None:
+        return
+    legacy.username = "guosy"
+    db.commit()
+
+
 def seed_default_admin(db: Session) -> None:
     """按需补齐默认账号：已存在的跳过，新库/老库都能补。"""
     defaults = [
@@ -56,6 +72,7 @@ def init_database() -> None:
     create_tables()
     db = SessionLocal()
     try:
+        _rename_legacy_admin(db)
         seed_default_admin(db)
     finally:
         db.close()

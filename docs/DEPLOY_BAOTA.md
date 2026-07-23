@@ -129,7 +129,7 @@ location /api/ {
 | 进程 | `supervisorctl status su-yunshi-log` → RUNNING |
 | API 反代 | `http://www.lumiclaw.top/api/v1/ai/providers` |
 | 前端 | `http://www.lumiclaw.top/sylog/` → 登录页 |
-| 登录 | `Guosy` / `1234567890`（**部署后尽快改密**） |
+| 登录 | `guosy` / `1234567890`（**部署后尽快改密**） |
 
 ---
 

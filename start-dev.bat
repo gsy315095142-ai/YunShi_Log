@@ -37,7 +37,7 @@ if defined LAN_IP (
 )
 echo.
 echo   API docs: http://127.0.0.1:8000/docs
-echo   Login: Guosy / 1234567890
+echo   Login: guosy / 1234567890
 echo ========================================
 echo.
 echo Keep both terminal windows open while testing.
