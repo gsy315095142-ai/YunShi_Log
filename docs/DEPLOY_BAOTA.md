@@ -135,6 +135,41 @@ location /api/ {
 
 ---
 
+## 第 8 步：语音识别服务（FunASR ONNX，语音输入的后端）
+
+语音输入链路：浏览器录音 → 后端 `/api/v1/asr/transcribe` → 本机 FunASR 服务（`127.0.0.1:19528`）→ 返回文字。
+
+> **为什么用 ONNX 量化版**：原 PyTorch 版 paraformer 大模型（944MB）加载峰值内存 **3.2G+**，
+> 在 3.5G 内存的本机上必然被 OOM 杀掉（2026-07-23 实测）。ONNX int8 量化版常驻内存仅
+> 500~800MB，识别更快，效果日常够用。**请勿回退 PyTorch 版脚本（`funasr_server.py`）。**
+
+1. 代码与依赖（脚本在仓库内，git pull 即可获得）：
+
+```bash
+cd /www/server/su-yunshi-log && git pull
+cp scripts/funasr_server_onnx.py /home/admin/funasr-server/
+/home/admin/funasr-env/bin/pip install funasr-onnx onnx -i https://mirrors.aliyun.com/pypi/simple/
+```
+
+- 虚拟环境 `/home/admin/funasr-env` 为历史遗留，直接复用；`onnx` 包是标点模型的依赖，缺了会静默退化为无标点输出
+- 首次启动自动从 ModelScope 下载量化模型（约 300MB，缓存在**启动用户**的家目录 `.cache/modelscope`）
+
+2. 宝塔 **Supervisor** 添加守护进程：
+
+| 字段 | 值 |
+|------|-----|
+| 名称 | `funasr-server` |
+| 启动用户 | **`admin`**（模型缓存在 admin 家目录；用 root 会重下模型且加剧内存压力） |
+| 运行目录 | `/home/admin/funasr-server` |
+| 启动命令 | `/home/admin/funasr-env/bin/python /home/admin/funasr-server/funasr_server_onnx.py --port 19528` |
+
+3. 自检：`curl -s http://127.0.0.1:19528/health` → `{"status":"ok","model_loaded":true}`
+
+4. 内存备忘：本机物理内存 3.5G + Swap 8G（`/swapfile2`、`/swapfile3` 各 4G，已写入 fstab）。
+   若再有内存大户服务上线导致 FunASR 被 OOM（`dmesg | grep "Killed process"` 可查），优先考虑停掉不常用的服务。
+
+---
+
 ## 常见问题
 
 ### 页面能开，新增记录报"请求失败"

@@ -621,6 +621,7 @@ users 1 ── * ai_chat_messages
 | 2026-07-22 | 输入栏排版打磨：grid 三列修正（＋挤压输入框、发送按钮换行问题）；发送按钮样式限定直接子级避免误染；发送改 36px 纸飞机图标钮、＋按钮 32px；快捷弹层加透明遮罩（点击外部收回）；快捷项之间加分隔线 |
 | 2026-07-23 | 管理员账号改名 Guosy → guosy：`config.py` 默认值改小写 + `init_db._rename_legacy_admin` 启动幂等迁移（小写名被占用则跳过）；数据按 user_id 关联不受影响；登录为精确匹配，改名后须用小写登录；文档同步 |
 | 2026-07-23 | **启用 HTTPS**（SSL 证书已装）：代码零改动——前端 API 全走相对路径 `/api/...` 同源自适应，后端 CORS 仅本地 dev 源、AI 厂商地址本为 https、SearXNG 走 127.0.0.1 均不受影响；nginx 反代补 `proxy_set_header X-Forwarded-Proto $scheme;`（见 DEPLOY_BAOTA），建议宝塔开「强制 HTTPS」；HTTPS 解锁语音输入前置条件（安全上下文才开放麦克风），README 待办同步更新 |
+| 2026-07-23 | **语音输入全链路上线**：前端 `VoiceButton`（录音中红色药丸「语音录入中，点击停止」）+ `useVoiceInput`（MediaRecorder，iOS 兼容 mp4，60 秒上限）接入 AI 页与今日卡片；后端 `/asr/transcribe` 代理本机 FunASR；**服务器端 PyTorch 版 paraformer 加载峰值 3.2G 在 3.5G 内存机器上必然 OOM，改用 funasr-onnx int8 量化方案**（`scripts/funasr_server_onnx.py`，常驻 500~800MB），Supervisor 以 **admin** 用户托管（模型缓存在 admin 家目录，勿用 root）；修复标点模型返回 `('文字',[编码])` 元组被整体字符串化（文本混入括号数字）；AI 输入栏改两行布局（输入框独占一行，＋居左、语音/发送居右）；发版 v0.1.26072301 |
 
 ---
 

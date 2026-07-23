@@ -33,6 +33,9 @@ git pull
 > - 后端由 Supervisor 以 **root** 运行，代码也是 root 克隆的，属主一致；
 >   **不要**以其他用户执行 git 操作后又直接重启，避免文件属主混杂导致 SQLite 只读
 >   （症状：页面能开、写入报"请求失败"）。
+> - **语音识别服务是独立进程**：`scripts/funasr_server_onnx.py` 有变更时，还需
+>   `cp scripts/funasr_server_onnx.py /home/admin/funasr-server/` 并在 Supervisor 重启
+>   `funasr-server`（admin 用户运行，详见 DEPLOY_BAOTA 第 8 步）；其余情况不用动它。
 
 ### 依赖有变化时（requirements.txt 改了才需要）
 
