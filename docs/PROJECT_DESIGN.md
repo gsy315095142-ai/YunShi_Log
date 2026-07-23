@@ -2,7 +2,7 @@
 
 > 文档版本：v0.3  
 > 最后更新：2026-07-20  
-> 状态：Phase 1～5 已完成，已上线 `http://www.lumiclaw.top/sylog/`（部署见 `DEPLOY_BAOTA.md`，更新见 `UPDATE_RUNBOOK.md`）
+> 状态：Phase 1～5 已完成，已上线 `https://www.lumiclaw.top/sylog/`（HTTPS 已启用；部署见 `DEPLOY_BAOTA.md`，更新见 `UPDATE_RUNBOOK.md`）
 
 本文档汇总需求结论与技术设计，供后续开发及新对话快速查阅。
 
@@ -620,6 +620,7 @@ users 1 ── * ai_chat_messages
 | 2026-07-22 | Markdown 表格渲染：`| 表格 |` 渲染为真表格（表头高亮、窄屏横滑），气泡正文容器 p→div.bubble-text；复制/导出时表格转「a ｜ b」纯文本；AI 输入区新增「＋」快捷发送（两条预设提问直发）；发版 v0.1.26072201 |
 | 2026-07-22 | 输入栏排版打磨：grid 三列修正（＋挤压输入框、发送按钮换行问题）；发送按钮样式限定直接子级避免误染；发送改 36px 纸飞机图标钮、＋按钮 32px；快捷弹层加透明遮罩（点击外部收回）；快捷项之间加分隔线 |
 | 2026-07-23 | 管理员账号改名 Guosy → guosy：`config.py` 默认值改小写 + `init_db._rename_legacy_admin` 启动幂等迁移（小写名被占用则跳过）；数据按 user_id 关联不受影响；登录为精确匹配，改名后须用小写登录；文档同步 |
+| 2026-07-23 | **启用 HTTPS**（SSL 证书已装）：代码零改动——前端 API 全走相对路径 `/api/...` 同源自适应，后端 CORS 仅本地 dev 源、AI 厂商地址本为 https、SearXNG 走 127.0.0.1 均不受影响；nginx 反代补 `proxy_set_header X-Forwarded-Proto $scheme;`（见 DEPLOY_BAOTA），建议宝塔开「强制 HTTPS」；HTTPS 解锁语音输入前置条件（安全上下文才开放麦克风），README 待办同步更新 |
 
 ---
 

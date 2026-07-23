@@ -17,7 +17,7 @@ echo   Local:  %~dp0frontend\dist\
 echo   Server: /www/wwwroot/lumiclaw.top/sylog/
 echo.
 echo Open in browser after upload:
-echo   http://www.lumiclaw.top/sylog/
+echo   https://www.lumiclaw.top/sylog/
 echo.
 dir /b "%~dp0frontend\dist"
 echo.

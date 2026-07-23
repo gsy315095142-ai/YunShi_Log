@@ -4,8 +4,8 @@
 
 ## 当前状态
 
-- Phase 1～5 已完成，**已上线**：`http://www.lumiclaw.top/sylog/`（阿里云 + 宝塔，HTTP 阶段）
-- 当前版本 v0.1.26072101（登录页可查看版本更新说明）
+- Phase 1～5 已完成，**已上线**：`https://www.lumiclaw.top/sylog/`（阿里云 + 宝塔，已启用 HTTPS）
+- 当前版本 v0.1.26072201（登录页可查看版本更新说明）
 - 需求与设计见 [`docs/PROJECT_DESIGN.md`](docs/PROJECT_DESIGN.md)
 - 首次部署见 [`docs/DEPLOY_BAOTA.md`](docs/DEPLOY_BAOTA.md)；日常更新（发版/回滚）见 [`docs/UPDATE_RUNBOOK.md`](docs/UPDATE_RUNBOOK.md)
 
@@ -91,15 +91,14 @@ frontend/src/
 
 ## 线上部署（已完成）
 
-- 地址：`http://www.lumiclaw.top/sylog/`
+- 地址：`https://www.lumiclaw.top/sylog/`
 - 架构：nginx 托管前端静态文件（`/sylog/`）+ 反代 API（`/api/` → `127.0.0.1:8000`）；后端由 Supervisor 常驻守护；数据库 SQLite 自动建表迁移
 - 代码管理：服务器通过 git 克隆本仓库（GitHub Deploy Keys），更新只需 `git pull` + 重启
 - 详细流程：[`docs/DEPLOY_BAOTA.md`](docs/DEPLOY_BAOTA.md)；日常更新：[`docs/UPDATE_RUNBOOK.md`](docs/UPDATE_RUNBOOK.md)
 
 ## 待完成（未来规划）
 
-- HTTPS 证书（语音输入的前置条件，浏览器只对安全上下文开放麦克风）
-- 语音输入（阿里服务器已有 ASR 服务，待 HTTPS 后接入）
+- 语音输入（HTTPS 已就绪，浏览器麦克风前置条件已满足；阿里服务器已有 ASR 服务，待接入）
 
 ## 联网搜索（SearXNG）
 

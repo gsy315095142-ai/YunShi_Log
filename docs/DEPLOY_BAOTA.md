@@ -2,7 +2,7 @@
 
 > ✅ 部署已于 2026-07-20 完成，本文档按**实际执行过程**记录，可用于重装/迁移/新机器复刻。
 > 日常迭代更新请看 [`UPDATE_RUNBOOK.md`](UPDATE_RUNBOOK.md)。
-> 访问地址：`http://www.lumiclaw.top/sylog/`（首页不链接，知道地址才能进入）
+> 访问地址：`https://www.lumiclaw.top/sylog/`（首页不链接，知道地址才能进入）
 
 ---
 
@@ -10,8 +10,8 @@
 
 ```
 浏览器
-  → http://www.lumiclaw.top/sylog/*     静态前端（dist 上传到网站目录/sylog/）
-  → http://www.lumiclaw.top/api/v1/*    nginx 反代 → 127.0.0.1:8000 后端（Supervisor 守护）
+  → https://www.lumiclaw.top/sylog/*     静态前端（dist 上传到网站目录/sylog/）
+  → https://www.lumiclaw.top/api/v1/*    nginx 反代 → 127.0.0.1:8000 后端（Supervisor 守护）
   → 127.0.0.1:8888                      SearXNG（同机，已对接）
 ```
 
@@ -69,7 +69,7 @@ deactivate
 ## 第 3 步：环境变量 `.env`
 
 ```bash
-printf 'JWT_SECRET=%s\nAPP_SECRET=%s\nCORS_ORIGINS=http://www.lumiclaw.top,http://lumiclaw.top\nSEARXNG_BASE_URL=http://127.0.0.1:8888\nSEARXNG_ENABLED=true\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > /www/server/su-yunshi-log/backend/.env
+printf 'JWT_SECRET=%s\nAPP_SECRET=%s\nCORS_ORIGINS=https://www.lumiclaw.top,https://lumiclaw.top\nSEARXNG_BASE_URL=http://127.0.0.1:8888\nSEARXNG_ENABLED=true\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > /www/server/su-yunshi-log/backend/.env
 ```
 
 `run-prod.sh` 启动时自动加载该文件。`.env` 不入 git，`git pull` 永远不会覆盖它。
@@ -106,10 +106,12 @@ location /api/ {
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
 }
 ```
 
-将来上 HTTPS 时建议补 `proxy_set_header X-Forwarded-Proto $scheme;`。
+> 2026-07-23 已启用 HTTPS：上方配置已补 `X-Forwarded-Proto` 一行（告知后端请求走 https）；
+> 另建议在宝塔面板开启「强制 HTTPS」，让 http 访问自动跳转 https。
 
 ## 第 6 步：前端上传
 
@@ -127,8 +129,8 @@ location /api/ {
 |--------|------------|
 | 后端健康 | SSH：`curl -s http://127.0.0.1:8000/health` → `{"status":"ok"}` |
 | 进程 | `supervisorctl status su-yunshi-log` → RUNNING |
-| API 反代 | `http://www.lumiclaw.top/api/v1/ai/providers` |
-| 前端 | `http://www.lumiclaw.top/sylog/` → 登录页 |
+| API 反代 | `https://www.lumiclaw.top/api/v1/ai/providers` |
+| 前端 | `https://www.lumiclaw.top/sylog/` → 登录页 |
 | 登录 | `guosy` / `1234567890`（**部署后尽快改密**） |
 
 ---
@@ -160,5 +162,5 @@ location /api/ {
 
 ## 访问地址（备忘）
 
-- 项目入口：`http://www.lumiclaw.top/sylog/`
-- 现有首页：`http://www.lumiclaw.top/index.html`（无需修改、无需加链接）
+- 项目入口：`https://www.lumiclaw.top/sylog/`
+- 现有首页：`https://www.lumiclaw.top/index.html`（无需修改、无需加链接）

@@ -109,4 +109,4 @@ supervisorctl status su-yunshi-log            # RUNNING 即进程正常
 supervisorctl tail su-yunshi-log stderr       # 出问题时看后端真实报错
 ```
 
-浏览器打开 `http://www.lumiclaw.top/sylog/` 能登录即全链路正常。
+浏览器打开 `https://www.lumiclaw.top/sylog/` 能登录即全链路正常。
