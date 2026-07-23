@@ -3,11 +3,13 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { fetchMonthRecords } from '../api/records'
 import { useAIChat } from '../hooks/useAIChat'
 import { useChatExport } from '../hooks/useChatExport'
+import { useVoiceInput } from '../hooks/useVoiceInput'
 import AISettingsCard from '../components/AISettingsCard'
 import ChatExportBar from '../components/ChatExportBar'
 import ChatWindow from '../components/ChatWindow'
 import DatePickerPopover from '../components/DatePickerPopover'
 import ExportPreviewModal from '../components/ExportPreviewModal'
+import VoiceButton from '../components/VoiceButton'
 import './AIPage.css'
 
 /** 「＋」快捷发送的预设提问，点击直接发送 */
@@ -23,6 +25,11 @@ export default function AIPage() {
   const [input, setInput] = useState('')
   const { messages, sending, send } = useAIChat()
   const chatExport = useChatExport(messages)
+  // 语音输入：识别文本追加到输入框末尾
+  const voice = useVoiceInput(
+    (text) => setInput((prev) => prev + text),
+    (msg) => alert(msg),
+  )
 
   useEffect(() => {
     const now = new Date()
@@ -159,6 +166,7 @@ export default function AIPage() {
                 <DatePickerPopover dateOptions={dateOptions} onSelect={onSelectDate} />
               )}
             </div>
+            <VoiceButton state={voice.state} onToggle={voice.toggle} disabled={sending} />
             <button type="button" className="send-btn" aria-label="发送" onClick={onSend} disabled={sending}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2 11 13" /><path d="M22 2 15 22l-4-9-9-4 20-7z" /></svg>
             </button>

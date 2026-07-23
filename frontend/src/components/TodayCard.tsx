@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import type { TodayInfo } from '../api/records'
+import { useVoiceInput } from '../hooks/useVoiceInput'
 import ConfirmDialog from './ConfirmDialog'
 import IconButton, { DeleteIcon, EditIcon } from './IconButton'
+import VoiceButton from './VoiceButton'
 import './TodayCard.css'
 
 const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六']
@@ -25,6 +27,11 @@ export default function TodayCard({ info, onCreate, onUpdate, onDelete, onFortun
   const [confirming, setConfirming] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  // 语音输入：识别文本追加到草稿末尾，错误走卡片内联提示
+  const voice = useVoiceInput(
+    (text) => setDraft((prev) => prev + text),
+    (msg) => setError(msg),
+  )
 
   // 外部数据刷新（保存/删除后）且不在编辑态时，同步草稿
   useEffect(() => {
@@ -95,6 +102,7 @@ export default function TodayCard({ info, onCreate, onUpdate, onDelete, onFortun
                 autoFocus={editing}
               />
               <div className="today-editor-actions">
+                <VoiceButton state={voice.state} onToggle={voice.toggle} disabled={saving} />
                 {editing && (
                   <button type="button" className="cancel-btn" onClick={cancelEdit}>
                     取消

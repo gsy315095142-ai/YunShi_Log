@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.ai.routes import router as ai_router
+from app.asr.routes import router as asr_router
 from app.auth.routes import router as auth_router
 from app.config import CORS_ORIGINS
 from app.db.init_db import init_database
@@ -32,6 +33,7 @@ app.include_router(auth_router, prefix=API_PREFIX)
 app.include_router(profile_router, prefix=API_PREFIX)
 app.include_router(records_router, prefix=API_PREFIX)
 app.include_router(ai_router, prefix=API_PREFIX)
+app.include_router(asr_router, prefix=API_PREFIX)
 
 
 @app.get("/health")

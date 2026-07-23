@@ -30,3 +30,8 @@ SEARXNG_BASE_URL = os.getenv("SEARXNG_BASE_URL", "http://127.0.0.1:8888")
 SEARXNG_ENABLED = os.getenv("SEARXNG_ENABLED", "true").lower() in ("1", "true", "yes")
 SEARXNG_MAX_RESULTS = int(os.getenv("SEARXNG_MAX_RESULTS", "5"))
 SEARXNG_TIMEOUT_SEC = float(os.getenv("SEARXNG_TIMEOUT_SEC", "10"))
+
+# FunASR 语音识别（阿里云同机部署默认 127.0.0.1:19528，首次识别需加载模型，超时给足）
+ASR_BASE_URL = os.getenv("ASR_BASE_URL", "http://127.0.0.1:19528")
+ASR_ENABLED = os.getenv("ASR_ENABLED", "true").lower() in ("1", "true", "yes")
+ASR_TIMEOUT_SEC = float(os.getenv("ASR_TIMEOUT_SEC", "60"))

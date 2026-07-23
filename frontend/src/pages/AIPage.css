@@ -54,7 +54,7 @@
 
 .chat-input-row {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto;
   gap: 8px;
   align-items: end;
 }

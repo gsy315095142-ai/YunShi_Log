@@ -1,0 +1,62 @@
+/* 语音输入按钮：尺寸对齐发送按钮（36px 圆钮），录音中红色呼吸闪烁 */
+.voice-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  min-height: 0;
+  padding: 0;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text-label);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voice-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.voice-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.voice-btn:disabled {
+  opacity: 0.6;
+}
+
+.voice-btn.recording {
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+  color: #fff;
+  animation: voice-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes voice-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 60, 60, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(220, 60, 60, 0);
+  }
+}
+
+/* 识别中的转圈 */
+.voice-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-border-strong);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: voice-spin 0.8s linear infinite;
+}
+
+@keyframes voice-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
