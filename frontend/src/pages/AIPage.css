@@ -52,11 +52,22 @@
   color: var(--color-danger);
 }
 
+/* 输入区改为上下两行：输入框独占一行占满宽度，按钮（＋居左，语音/发送居右）在下一行 */
 .chat-input-row {
-  display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  display: flex;
+  flex-direction: column;
   gap: 8px;
-  align-items: end;
+}
+
+.chat-input-btns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ＋居左，把语音与发送按钮顶到右侧 */
+.chat-input-btns .quick-send-wrapper {
+  margin-right: auto;
 }
 
 .input-wrapper {
@@ -73,7 +84,7 @@
 }
 
 /* 发送按钮：纸飞机图标圆钮（> 限定直接子级，避免误伤「＋」按钮） */
-.chat-input-row > .send-btn {
+.chat-input-btns > .send-btn {
   flex-shrink: 0;
   width: 36px;
   height: 36px;
@@ -88,12 +99,12 @@
   justify-content: center;
 }
 
-.chat-input-row > .send-btn svg {
+.chat-input-btns > .send-btn svg {
   width: 16px;
   height: 16px;
 }
 
-.chat-input-row > .send-btn:disabled {
+.chat-input-btns > .send-btn:disabled {
   opacity: 0.6;
 }
 

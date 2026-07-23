@@ -126,35 +126,6 @@ export default function AIPage() {
             </div>
           )}
           <div className="chat-input-row">
-            <div className="quick-send-wrapper">
-              <button
-                type="button"
-                className="quick-send-btn"
-                aria-label="快捷发送"
-                onClick={() => setShowQuickSend((v) => !v)}
-              >
-                ＋
-              </button>
-              {showQuickSend && (
-                <>
-                  {/* 透明遮罩：点击外部任意位置收回弹层 */}
-                  <div className="quick-send-backdrop" onClick={() => setShowQuickSend(false)} />
-                  <div className="quick-send-popover">
-                    {QUICK_SENDS.map((q) => (
-                      <button
-                        key={q}
-                        type="button"
-                        className="quick-send-item"
-                        disabled={sending}
-                        onClick={() => onQuickSend(q)}
-                      >
-                        {q}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
             <div className="input-wrapper">
               <textarea
                 value={input}
@@ -166,10 +137,41 @@ export default function AIPage() {
                 <DatePickerPopover dateOptions={dateOptions} onSelect={onSelectDate} />
               )}
             </div>
-            <VoiceButton state={voice.state} onToggle={voice.toggle} disabled={sending} />
-            <button type="button" className="send-btn" aria-label="发送" onClick={onSend} disabled={sending}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2 11 13" /><path d="M22 2 15 22l-4-9-9-4 20-7z" /></svg>
-            </button>
+            <div className="chat-input-btns">
+              <div className="quick-send-wrapper">
+                <button
+                  type="button"
+                  className="quick-send-btn"
+                  aria-label="快捷发送"
+                  onClick={() => setShowQuickSend((v) => !v)}
+                >
+                  ＋
+                </button>
+                {showQuickSend && (
+                  <>
+                    {/* 透明遮罩：点击外部任意位置收回弹层 */}
+                    <div className="quick-send-backdrop" onClick={() => setShowQuickSend(false)} />
+                    <div className="quick-send-popover">
+                      {QUICK_SENDS.map((q) => (
+                        <button
+                          key={q}
+                          type="button"
+                          className="quick-send-item"
+                          disabled={sending}
+                          onClick={() => onQuickSend(q)}
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+              <VoiceButton state={voice.state} onToggle={voice.toggle} disabled={sending} />
+              <button type="button" className="send-btn" aria-label="发送" onClick={onSend} disabled={sending}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2 11 13" /><path d="M22 2 15 22l-4-9-9-4 20-7z" /></svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
