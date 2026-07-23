@@ -108,6 +108,9 @@ def transcribe_audio(audio_path):
                 pr = punc(text)
                 if pr:
                     t = pr[0] if isinstance(pr, list) else pr
+                    # CT_Transformer 返回 ('文字', [标点位置编码])，只取文字部分
+                    if isinstance(t, (list, tuple)):
+                        t = t[0] if t else ""
                     if t:
                         text = str(t).strip()
         return text
